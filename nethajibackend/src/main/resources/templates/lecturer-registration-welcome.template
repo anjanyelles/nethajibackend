@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to Nethaji Degree College</title>
+</head>
+<body style="font-family: Arial; background:#f4f6f8; padding:20px;">
+
+<div style="max-width:600px; background:#fff; padding:25px; margin:auto; border-radius:8px;">
+
+    <h2 style="text-align:center; color:#2c3e50;">
+        Welcome to Nethaji Degree College 🏫
+    </h2>
+
+    <p>Dear <strong>${name}</strong>,</p>
+
+    <p>
+        We are pleased to inform you that you have been onboarded as a
+        <strong>Lecturer</strong> at <strong>Nethaji Degree College</strong>.
+    </p>
+
+    <p><strong>Your Faculty Login Credentials:</strong></p>
+
+    <div style="background:#eef2ff; padding:15px; border-radius:6px;">
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Password:</b> ${password}</p>
+    </div>
+
+    <p>
+        Access the faculty portal using the link below:
+    </p>
+
+    <p style="text-align:center;">
+        <a href="https://api.nethajidcs.com/login"
+           style="background:#1f7a3f; color:#fff; padding:12px 20px;
+                  text-decoration:none; border-radius:6px;">
+            Lecturer Login
+        </a>
+    </p>
+
+    <p>
+        For security purposes, please update your password after your first login.
+    </p>
+
+    <p>
+        We look forward to your valuable contribution to our institution.
+    </p>
+
+    <p>
+        Regards,<br/>
+        <strong>Nethaji Degree College Administration</strong>
+    </p>
+
+</div>
+
+</body>
+</html>
