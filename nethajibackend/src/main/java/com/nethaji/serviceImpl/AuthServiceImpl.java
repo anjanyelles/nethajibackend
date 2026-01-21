@@ -30,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +65,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private SignatureService signatureService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private StudentProfileRepository studentProfileRepository;
@@ -119,6 +123,45 @@ public class AuthServiceImpl implements AuthService {
                         new BasicAWSCredentials(accessKey, secretKey)
                 ))
                 .build();
+    }
+
+    private void enrichStudentRegisterRequestIfStudent(User user, RegisterRequest dto) {
+        if (user == null || dto == null || user.getUserType() != User.UserType.STUDENT) {
+            return;
+        }
+
+        StudentPrograms sp = studentProgramsRepository.findByStudentIdAndIsActiveTrue(user.getId());
+        if (sp != null) {
+            dto.setProgramId(sp.getProgramId());
+            Programs p = programsRepository.findById(sp.getProgramId()).orElse(null);
+            if (p != null) {
+                dto.setStudentProgramName(p.getName());
+            }
+        }
+
+        List<StudentEducationInfo> semesters = studentSemestersRepository.findByStudentId(user.getId());
+        StudentEducationInfo activeInfo = semesters == null
+                ? null
+                : semesters.stream()
+                .filter(StudentEducationInfo::isActive)
+                .max(Comparator.comparing(StudentEducationInfo::getSemester))
+                .orElse(null);
+
+        if (activeInfo != null) {
+            dto.setSemester(activeInfo.getSemester());
+            dto.setStudentCurrentSemester(activeInfo.getSemester() != null ? activeInfo.getSemester().toString() : null);
+            dto.setBranch(activeInfo.getBranch());
+            dto.setGraduationType(activeInfo.getGraduationType());
+            if (dto.getProgramId() == null && activeInfo.getProgramId() != null) {
+                dto.setProgramId(activeInfo.getProgramId());
+            }
+            if (dto.getStudentProgramName() == null && activeInfo.getProgramId() != null) {
+                Programs p = programsRepository.findById(activeInfo.getProgramId()).orElse(null);
+                if (p != null) {
+                    dto.setStudentProgramName(p.getName());
+                }
+            }
+        }
     }
 
 
@@ -302,7 +345,6 @@ public class AuthServiceImpl implements AuthService {
 
 
                 User existingUser = optionalUser.get();
-                String hashedPassword = signatureService.hashPassword(loginRequest.getPassword(), existingUser.getSalt());
 
                 if(!existingUser.getIsActive()){
 
@@ -312,10 +354,42 @@ public class AuthServiceImpl implements AuthService {
 
                 }
 
+                // Handle password verification - support both BCrypt and custom salt-based hashing
+                boolean passwordMatches = false;
+                
+                // Check if passwordHash exists
+                if (existingUser.getPasswordHash() == null || existingUser.getPasswordHash().isEmpty()) {
+                    log.error("User {} has no password hash", existingUser.getEmail());
+                    emailOtpResponse.setStatus("Invalid username or password");
+                    emailOtpResponse.setUserStatus(false);
+                    return ResponseEntity.badRequest().body(emailOtpResponse);
+                }
+                
+                if (existingUser.getSalt() == null || existingUser.getSalt().isEmpty()) {
+                    // Use BCrypt verification for users without salt (legacy/seed data)
+                    try {
+                        log.debug("Attempting BCrypt verification for user: {}", existingUser.getEmail());
+                        passwordMatches = passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPasswordHash());
+                        log.debug("BCrypt verification result: {}", passwordMatches);
+                    } catch (Exception e) {
+                        log.error("BCrypt password verification failed for user: {}", existingUser.getEmail(), e);
+                        passwordMatches = false;
+                    }
+                } else {
+                    // Use custom salt-based hashing
+                    try {
+                        log.debug("Attempting custom salt-based verification for user: {}", existingUser.getEmail());
+                        String hashedPassword = signatureService.hashPassword(loginRequest.getPassword(), existingUser.getSalt());
+                        passwordMatches = hashedPassword.equals(existingUser.getPasswordHash());
+                        log.debug("Custom verification result: {}", passwordMatches);
+                    } catch (Exception e) {
+                        log.error("Custom password verification failed for user: {}", existingUser.getEmail(), e);
+                        passwordMatches = false;
+                    }
+                }
 
-
-                if (!hashedPassword.equals(existingUser.getPasswordHash())) {
-
+                if (!passwordMatches) {
+                    log.warn("Password mismatch for user: {}", existingUser.getEmail());
                     emailOtpResponse.setStatus("Invalid username or password");
                     emailOtpResponse.setUserStatus(false);
                     return ResponseEntity.badRequest().body(emailOtpResponse);
@@ -386,9 +460,29 @@ public class AuthServiceImpl implements AuthService {
         }
 
 
-        String hashedPassword = signatureService.hashPassword(loginRequest.getPassword(), existingUser.getSalt());
+        // Handle password verification - support both BCrypt and custom salt-based hashing
+        boolean passwordMatches = false;
+        
+        if (existingUser.getSalt() == null || existingUser.getSalt().isEmpty()) {
+            // Use BCrypt verification for users without salt (legacy/seed data)
+            try {
+                passwordMatches = passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPasswordHash());
+            } catch (Exception e) {
+                log.error("BCrypt password verification failed for student: {}", existingUser.getEmail(), e);
+                passwordMatches = false;
+            }
+        } else {
+            // Use custom salt-based hashing
+            try {
+                String hashedPassword = signatureService.hashPassword(loginRequest.getPassword(), existingUser.getSalt());
+                passwordMatches = hashedPassword.equals(existingUser.getPasswordHash());
+            } catch (Exception e) {
+                log.error("Custom password verification failed for student: {}", existingUser.getEmail(), e);
+                passwordMatches = false;
+            }
+        }
 
-        if (!hashedPassword.equals(existingUser.getPasswordHash())) {
+        if (!passwordMatches) {
             response.setStatus("Invalid password");
             response.setUserStatus(false);
             return ResponseEntity.badRequest().body(response);
@@ -441,16 +535,7 @@ public class AuthServiceImpl implements AuthService {
 
                     dto.setStudentStatus(user.getIsActive());
 
-                    StudentPrograms sp=studentProgramsRepository.findByStudentIdAndIsActiveTrue(user.getId());
-
-                    Programs p=programsRepository.findById(sp.getProgramId()).orElse(null);
-                    dto.setStudentProgramName(p!=null?p.getName():"no program data found Please check");
-
-                    StudentEducationInfo ss=   null;
-                            //studentSemestersRepository.findActiveSemesterByStudentId(user.getId());
-
-
-                    dto.setStudentCurrentSemester(ss.getSemester().toString());
+                    enrichStudentRegisterRequestIfStudent(user, dto);
 
                     return  dto;
 
@@ -800,6 +885,12 @@ public class AuthServiceImpl implements AuthService {
         String templateName;
         String subject;
 
+        if (request.getUserType() == null) {
+            response.setStatus("userType is required");
+            response.setUserStatus(false);
+            return ResponseEntity.badRequest().body(response);
+        }
+
         if (request.getEmail() != null && userRepository.findByEmail(request.getEmail()).isPresent()) {
             response.setStatus("Email already exists.");
             response.setUserStatus(false);
@@ -812,16 +903,65 @@ public class AuthServiceImpl implements AuthService {
             return ResponseEntity.badRequest().body(response);
         }
 
-        Programs p=programsRepository.findById(request.getProgramId()).orElse(null);
-
-        if(p==null){
-            response.setStatus("Course not found with this id :"+request.getProgramId());
-            response.setUserStatus(false);
-            return ResponseEntity.badRequest().body(response);
-        }
+        User.UserType userType = request.getUserType();
         int year = LocalDate.now().getYear();
+        String res = null;
 
-        String res=generateStudentId(request.getBranch().toString(),String.valueOf(year),request.getSemester().toString());
+        if (userType.equals(User.UserType.STUDENT)) {
+            if (request.getProgramId() == null) {
+                response.setStatus("programId is required for STUDENT");
+                response.setUserStatus(false);
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            UUID resolvedProgramId = request.getProgramId();
+            Programs p = programsRepository.findById(resolvedProgramId).orElse(null);
+            if (p == null) {
+                Department dept = departmentRepository.findById(resolvedProgramId).orElse(null);
+                if (dept != null && dept.getProgramId() != null) {
+                    resolvedProgramId = dept.getProgramId();
+                    p = programsRepository.findById(resolvedProgramId).orElse(null);
+                    if (request.getGraduationType() == null || request.getGraduationType().isBlank()) {
+                        request.setGraduationType(dept.getDepartmentCode());
+                    }
+                }
+            }
+
+            if (p == null) {
+                response.setStatus("Course not found with this id :" + request.getProgramId());
+                response.setUserStatus(false);
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            request.setProgramId(resolvedProgramId);
+
+            if (request.getBranch() == null) {
+                response.setStatus("branch is required for STUDENT");
+                response.setUserStatus(false);
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            if (request.getSemester() == null) {
+                response.setStatus("semester is required for STUDENT");
+                response.setUserStatus(false);
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            res = generateStudentId(request.getBranch().toString(), String.valueOf(year), request.getSemester().toString());
+        }
+
+        if (userType.equals(User.UserType.LECTURER)) {
+            if (request.getSubjectType() == null) {
+                response.setStatus("subjectType is required for LECTURER");
+                response.setUserStatus(false);
+                return ResponseEntity.badRequest().body(response);
+            }
+            if (request.getGraduationType() == null || request.getGraduationType().isBlank()) {
+                response.setStatus("graduationType is required for LECTURER");
+                response.setUserStatus(false);
+                return ResponseEntity.badRequest().body(response);
+            }
+        }
 
         User newUser = new User();
         newUser.setJoiningYear(year);
@@ -842,9 +982,6 @@ public class AuthServiceImpl implements AuthService {
         newUser.setCreatedAt(new Date());
         newUser.setUpdatedAt(new Date());
         newUser.setCountryCode(request.getCountryCode());
-
-        User.UserType userType=request.getUserType();
-
 
         newUser.setUserType(userType);
 
@@ -871,6 +1008,7 @@ public class AuthServiceImpl implements AuthService {
             leDetails.setSubjectType(request.getSubjectType());
             leDetails.setGraduationLecturer(request.getGraduationType());
             leDetails.setCreatedAt(new Date());
+            leDetails.setUpdatedAt(new Date());
             lectureCoursesRepository.save(leDetails);
 
         }
@@ -932,7 +1070,17 @@ public class AuthServiceImpl implements AuthService {
             return data;
         }
 
-        List<StudentEducationInfo> educationInfos = studentSemestersRepository.findActiveStudentsByProgramAndSemester(programId,semester);
+        List<StudentEducationInfo> educationInfos;
+        Department dept = departmentRepository.findById(programId).orElse(null);
+        if (dept != null && dept.getProgramId() != null && dept.getDepartmentCode() != null) {
+            educationInfos = studentSemestersRepository.findActiveStudentsByProgramAndSemesterAndGraduationType(
+                    dept.getProgramId(),
+                    semester,
+                    dept.getDepartmentCode()
+            );
+        } else {
+            educationInfos = studentSemestersRepository.findActiveStudentsByProgramAndSemester(programId,semester);
+        }
 
 
         for (StudentEducationInfo educationInfo : educationInfos) {
@@ -1121,84 +1269,120 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public StaffProfile saveStaffProfile(StaffProfile dto){
 
-        StaffProfile staffProfile;
-        if(dto.getUserId()!=null){
-
-             staffProfile=staffProfileRepo.findByUserId(dto.getUserId());
-
-            if(staffProfile!=null)
-                staffProfile.setAddress(dto.getAddress());
-            staffProfile.setCreatedAt(new Date());
-            staffProfile.setEmail(dto.getEmail());
-            staffProfile.setStatus(StaffStatus.ACTIVE);
-            staffProfile.setGender(dto.getGender());
-            staffProfile.setDateOfBirth(dto.getDateOfBirth());
-            staffProfile.setDesignation(dto.getDesignation());
-            staffProfile.setJoiningDate(dto.getJoiningDate());
-            staffProfile.setEmploymentType(dto.getEmploymentType());
-            staffProfile.setFirstName(dto.getFirstName());
-            staffProfile.setLastName(dto.getFirstName());
-            staffProfile.setPhoneNumber(dto.getPhoneNumber());
-            staffProfile.setSalary(dto.getSalary());
-            staffProfile.setExperienceYears(dto.getExperienceYears());
-            staffProfile.setQualification(dto.getQualification());
-            staffProfile.setEmployeeSubject(dto.getEmployeeSubject());
-
-        }else {
-             staffProfile=new StaffProfile();
-            staffProfile.setAddress(dto.getAddress());
-            staffProfile.setCreatedAt(new Date());
-            staffProfile.setEmail(dto.getEmail());
-            staffProfile.setStatus(StaffStatus.ACTIVE);
-            staffProfile.setGender(dto.getGender());
-            staffProfile.setDateOfBirth(dto.getDateOfBirth());
-            staffProfile.setDesignation(dto.getDesignation());
-            staffProfile.setJoiningDate(dto.getJoiningDate());
-            staffProfile.setEmploymentType(dto.getEmploymentType());
-            staffProfile.setFirstName(dto.getFirstName());
-            staffProfile.setLastName(dto.getFirstName());
-            staffProfile.setPhoneNumber(dto.getPhoneNumber());
-            staffProfile.setSalary(dto.getSalary());
-            staffProfile.setExperienceYears(dto.getExperienceYears());
-            staffProfile.setQualification(dto.getQualification());
-            staffProfile.setEmployeeSubject(dto.getEmployeeSubject());
+        if (dto == null || dto.getUserId() == null) {
+            throw new IllegalArgumentException("userId is required");
         }
 
+        StaffProfile staffProfile = staffProfileRepo.findByUserId(dto.getUserId());
+        boolean isNew = false;
+        if (staffProfile == null) {
+            staffProfile = new StaffProfile();
+            staffProfile.setUserId(dto.getUserId());
+            staffProfile.setCreatedAt(new Date());
+            isNew = true;
+        }
 
-        staffProfile=staffProfileRepo.save(staffProfile);
+        staffProfile.setUpdatedAt(new Date());
 
-        return staffProfile;
+        // NOTE: This method is used by the UI for partial updates (e.g., only address/profile photo).
+        // Do NOT overwrite existing required columns with null.
+        staffProfile.setFirstName(dto.getFirstName() != null ? dto.getFirstName() : staffProfile.getFirstName());
+        staffProfile.setMiddleName(dto.getMiddleName() != null ? dto.getMiddleName() : staffProfile.getMiddleName());
+        staffProfile.setLastName(dto.getLastName() != null ? dto.getLastName() : staffProfile.getLastName());
+
+        staffProfile.setDepartment(dto.getDepartment() != null ? dto.getDepartment() : staffProfile.getDepartment());
+        staffProfile.setDesignation(dto.getDesignation() != null ? dto.getDesignation() : staffProfile.getDesignation());
+        staffProfile.setQualification(dto.getQualification() != null ? dto.getQualification() : staffProfile.getQualification());
+        staffProfile.setEmployeeSubject(dto.getEmployeeSubject() != null ? dto.getEmployeeSubject() : staffProfile.getEmployeeSubject());
+
+        staffProfile.setJoiningDate(dto.getJoiningDate() != null ? dto.getJoiningDate() : staffProfile.getJoiningDate());
+        staffProfile.setExperienceYears(dto.getExperienceYears() != null ? dto.getExperienceYears() : staffProfile.getExperienceYears());
+
+        staffProfile.setPhoneNumber(dto.getPhoneNumber() != null ? dto.getPhoneNumber() : staffProfile.getPhoneNumber());
+        staffProfile.setEmail(dto.getEmail() != null ? dto.getEmail() : staffProfile.getEmail());
+
+        staffProfile.setEmploymentType(dto.getEmploymentType() != null ? dto.getEmploymentType() : staffProfile.getEmploymentType());
+        staffProfile.setSalary(dto.getSalary() != null ? dto.getSalary() : staffProfile.getSalary());
+
+        staffProfile.setEmergencyContactName(dto.getEmergencyContactName() != null ? dto.getEmergencyContactName() : staffProfile.getEmergencyContactName());
+        staffProfile.setEmergencyContactPhone(dto.getEmergencyContactPhone() != null ? dto.getEmergencyContactPhone() : staffProfile.getEmergencyContactPhone());
+        staffProfile.setAddress(dto.getAddress() != null ? dto.getAddress() : staffProfile.getAddress());
+        staffProfile.setDateOfBirth(dto.getDateOfBirth() != null ? dto.getDateOfBirth() : staffProfile.getDateOfBirth());
+        staffProfile.setGender(dto.getGender() != null ? dto.getGender() : staffProfile.getGender());
+
+        // Allow profile photo update via upload flow
+        staffProfile.setProfilePicture(dto.getProfilePicture() != null ? dto.getProfilePicture() : staffProfile.getProfilePicture());
+
+        // Ensure required fields are present even if older rows were created incorrectly
+        if (staffProfile.getDepartment() == null) {
+            staffProfile.setDepartment("NA");
+        }
+        if (staffProfile.getDesignation() == null) {
+            staffProfile.setDesignation("NA");
+        }
+        if (staffProfile.getEmployeeSubject() == null) {
+            staffProfile.setEmployeeSubject("NA");
+        }
+        if (staffProfile.getJoiningDate() == null) {
+            staffProfile.setJoiningDate(java.time.LocalDate.now());
+        }
+        if (staffProfile.getFirstName() == null) {
+            staffProfile.setFirstName("");
+        }
+        if (staffProfile.getLastName() == null) {
+            staffProfile.setLastName("");
+        }
+
+        staffProfile.setStatus(dto.getStatus() != null ? dto.getStatus() : StaffStatus.ACTIVE);
+
+        StaffProfile saved = staffProfileRepo.save(staffProfile);
+
+        if (isNew) {
+            return saved;
+        }
+        return saved;
     }
 
     @Override
     public StaffProfile getStaffProfile(UUID userId) {
 
-        StaffProfile staffProfile = new StaffProfile();
-        if (userId != null) {
-
-            StaffProfile dto = staffProfileRepo.findByUserId(userId);
-
-            if (dto != null) {
-                staffProfile.setAddress(dto.getAddress());
-                staffProfile.setCreatedAt(new Date());
-                staffProfile.setEmail(dto.getEmail());
-                staffProfile.setStatus(dto.getStatus());
-                staffProfile.setGender(dto.getGender());
-                staffProfile.setDateOfBirth(dto.getDateOfBirth());
-                staffProfile.setDesignation(dto.getDesignation());
-                staffProfile.setJoiningDate(dto.getJoiningDate());
-                staffProfile.setEmploymentType(dto.getEmploymentType());
-                staffProfile.setFirstName(dto.getFirstName());
-                staffProfile.setLastName(dto.getFirstName());
-                staffProfile.setPhoneNumber(dto.getPhoneNumber());
-                staffProfile.setSalary(dto.getSalary());
-                staffProfile.setExperienceYears(dto.getExperienceYears());
-                staffProfile.setQualification(dto.getQualification());
-                staffProfile.setEmployeeSubject(dto.getEmployeeSubject());
-
-            }
+        if (userId == null) {
+            return new StaffProfile();
         }
-            return staffProfile;
+
+        StaffProfile dto = staffProfileRepo.findByUserId(userId);
+        if (dto == null) {
+            return new StaffProfile();
+        }
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        StaffProfile staffProfile = new StaffProfile();
+        staffProfile.setId(dto.getId());
+        staffProfile.setUserId(dto.getUserId());
+        staffProfile.setFirstName(dto.getFirstName() != null ? dto.getFirstName() : (user != null ? user.getFirstName() : null));
+        staffProfile.setMiddleName(dto.getMiddleName());
+        staffProfile.setLastName(dto.getLastName() != null ? dto.getLastName() : (user != null ? user.getLastName() : null));
+        staffProfile.setDepartment(dto.getDepartment());
+        staffProfile.setDesignation(dto.getDesignation());
+        staffProfile.setQualification(dto.getQualification());
+        staffProfile.setEmployeeSubject(dto.getEmployeeSubject());
+        staffProfile.setJoiningDate(dto.getJoiningDate());
+        staffProfile.setExperienceYears(dto.getExperienceYears());
+        staffProfile.setPhoneNumber(dto.getPhoneNumber() != null ? dto.getPhoneNumber() : (user != null ? user.getMobileNumber() : null));
+        staffProfile.setEmail(dto.getEmail() != null ? dto.getEmail() : (user != null ? user.getEmail() : null));
+        staffProfile.setEmploymentType(dto.getEmploymentType());
+        staffProfile.setSalary(dto.getSalary());
+        staffProfile.setEmergencyContactName(dto.getEmergencyContactName());
+        staffProfile.setEmergencyContactPhone(dto.getEmergencyContactPhone());
+        staffProfile.setAddress(dto.getAddress());
+        staffProfile.setDateOfBirth(dto.getDateOfBirth());
+        staffProfile.setGender(dto.getGender());
+        staffProfile.setStatus(dto.getStatus());
+        staffProfile.setCreatedAt(dto.getCreatedAt() != null ? dto.getCreatedAt() : (user != null ? user.getCreatedAt() : null));
+        staffProfile.setUpdatedAt(dto.getUpdatedAt());
+
+        return staffProfile;
 
     }
     @Override
@@ -1212,22 +1396,29 @@ public class AuthServiceImpl implements AuthService {
             getProfiles.stream().forEach(d -> {
                 ;
                 StaffProfile staffProfile = new StaffProfile();
-                staffProfile.setAddress(d.getAddress());
-                staffProfile.setCreatedAt(new Date());
-                staffProfile.setEmail(d.getEmail());
-                staffProfile.setStatus(StaffStatus.ACTIVE);
-                staffProfile.setGender(d.getGender());
-                staffProfile.setDateOfBirth(d.getDateOfBirth());
-                staffProfile.setDesignation(d.getDesignation());
-                staffProfile.setJoiningDate(d.getJoiningDate());
-                staffProfile.setEmploymentType(d.getEmploymentType());
+                staffProfile.setId(d.getId());
+                staffProfile.setUserId(d.getUserId());
                 staffProfile.setFirstName(d.getFirstName());
-                staffProfile.setLastName(d.getFirstName());
+                staffProfile.setMiddleName(d.getMiddleName());
+                staffProfile.setLastName(d.getLastName());
+                staffProfile.setEmail(d.getEmail());
                 staffProfile.setPhoneNumber(d.getPhoneNumber());
-                staffProfile.setSalary(d.getSalary());
-                staffProfile.setExperienceYears(d.getExperienceYears());
+                staffProfile.setDepartment(d.getDepartment());
+                staffProfile.setDesignation(d.getDesignation());
                 staffProfile.setQualification(d.getQualification());
                 staffProfile.setEmployeeSubject(d.getEmployeeSubject());
+                staffProfile.setJoiningDate(d.getJoiningDate());
+                staffProfile.setExperienceYears(d.getExperienceYears());
+                staffProfile.setEmploymentType(d.getEmploymentType());
+                staffProfile.setSalary(d.getSalary());
+                staffProfile.setEmergencyContactName(d.getEmergencyContactName());
+                staffProfile.setEmergencyContactPhone(d.getEmergencyContactPhone());
+                staffProfile.setAddress(d.getAddress());
+                staffProfile.setDateOfBirth(d.getDateOfBirth());
+                staffProfile.setGender(d.getGender());
+                staffProfile.setStatus(d.getStatus());
+                staffProfile.setCreatedAt(d.getCreatedAt());
+                staffProfile.setUpdatedAt(d.getUpdatedAt());
 
                 list.add(staffProfile);
             });
@@ -1366,6 +1557,7 @@ public class AuthServiceImpl implements AuthService {
                 registerRequest.setMobileNumber(user.getMobileNumber());
                 registerRequest.setCountryCode(user.getCountryCode());
                 registerRequest.setUserType(user.getUserType());
+                enrichStudentRegisterRequestIfStudent(user, registerRequest);
                 return registerRequest;
             });
 
@@ -1551,8 +1743,23 @@ public class AuthServiceImpl implements AuthService {
 
         Optional<StudentProfile> optional = studentProfileRepository.findByUserId(id);
 
+        User user = userRepository.findById(id).orElse(null);
+
         if (optional.isEmpty()) {
-            return ResponseEntity.ok(new StudentProfileDTO());
+
+            StudentProfileDTO dto = new StudentProfileDTO();
+            dto.setUserId(id);
+
+            if (user != null) {
+                dto.setEnrollmentNumber(user.getEnrollmentNumber());
+                dto.setFirstName(user.getFirstName());
+                dto.setLastName(user.getLastName());
+                dto.setEmail(user.getEmail());
+                dto.setMobileNumber(user.getMobileNumber());
+                dto.setUserCreatedAt(user.getCreatedAt());
+            }
+
+            return ResponseEntity.ok(dto);
         }
 
         StudentProfile entity = optional.get();
@@ -1560,6 +1767,15 @@ public class AuthServiceImpl implements AuthService {
 
         dto.setId(entity.getId());
         dto.setUserId(entity.getUser().getId());
+
+        if (user != null) {
+            dto.setEnrollmentNumber(user.getEnrollmentNumber());
+            dto.setFirstName(user.getFirstName());
+            dto.setLastName(user.getLastName());
+            dto.setEmail(user.getEmail());
+            dto.setMobileNumber(user.getMobileNumber());
+            dto.setUserCreatedAt(user.getCreatedAt());
+        }
 
         dto.setDateOfBirth(entity.getDateOfBirth());
         dto.setGender(entity.getGender());

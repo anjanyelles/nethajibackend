@@ -37,6 +37,13 @@ public class StudentProfileDTO {
     private Date createdAt;
     private Date updatedAt;
 
+    private String enrollmentNumber;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String mobileNumber;
+    private Date userCreatedAt;
+
 
 
 }

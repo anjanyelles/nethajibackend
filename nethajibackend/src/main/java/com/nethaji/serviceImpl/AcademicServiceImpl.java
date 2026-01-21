@@ -63,6 +63,8 @@ public class AcademicServiceImpl implements AcademicService {
             department.setDepartmentCode(code);
             department.setDepartmentName(dto.getDepartmentName());
 
+            department.setProgramId(dto.getProgramId());
+
 
             department.setUpdatedAt(new Date());
         }
@@ -72,6 +74,7 @@ public class AcademicServiceImpl implements AcademicService {
             department = new Department();
             department.setDepartmentCode(code);
             department.setDepartmentName(dto.getDepartmentName());
+            department.setProgramId(dto.getProgramId());
             department.setCreatedAt(new Date());
             department.setUpdatedAt(new Date());
         }
@@ -85,6 +88,8 @@ public class AcademicServiceImpl implements AcademicService {
 
         res.setCreatedAt(saved.getCreatedAt());
         res.setUpdatedAt(saved.getUpdatedAt());
+
+        res.setProgramId(saved.getProgramId());
 
         res.setStatus(true);
         res.setMessage(dto.getId() != null ? "Department updated successfully." : "Department created successfully.");
@@ -115,6 +120,8 @@ public class AcademicServiceImpl implements AcademicService {
 
             dto.setCreatedAt(department.getCreatedAt());
             dto.setUpdatedAt(department.getUpdatedAt());
+
+            dto.setProgramId(department.getProgramId());
 
             List<DepartMentSemesters> departMentSemesters=departMentSemestersRepo.findByDepartmentId1(department.getId());
 
@@ -330,16 +337,40 @@ public class AcademicServiceImpl implements AcademicService {
             programs = programsRepository.findAll();
         }
 
-        List<ProgramResponseDTO> response = programs.stream().map(program -> {
-            ProgramResponseDTO dto = new ProgramResponseDTO();
-            dto.setId(program.getId());
-            dto.setName(program.getName());
-            dto.setProgramCode(program.getProgramCode());
-            dto.setLevel(program.getLevel().name());
-            dto.setDurationYears(program.getDurationYears());
+        List<ProgramResponseDTO> response = new ArrayList<>();
+        for (Programs program : programs) {
+            if (program == null) {
+                continue;
+            }
 
-            return dto;
-        }).collect(Collectors.toList());
+            List<Department> departments = departmentRepository.findByProgramId(program.getId());
+            if (departments == null || departments.isEmpty()) {
+                ProgramResponseDTO dto = new ProgramResponseDTO();
+                dto.setId(program.getId());
+                dto.setName(program.getName());
+                dto.setProgramCode(program.getProgramCode());
+                dto.setLevel(program.getLevel().name());
+                dto.setDurationYears(program.getDurationYears());
+                response.add(dto);
+                continue;
+            }
+
+            for (Department department : departments) {
+                if (department == null) {
+                    continue;
+                }
+                ProgramResponseDTO dto = new ProgramResponseDTO();
+                dto.setId(department.getId());
+                dto.setName(department.getDepartmentName());
+                dto.setProgramCode(program.getProgramCode());
+                dto.setLevel(program.getLevel().name());
+                dto.setDurationYears(program.getDurationYears());
+                dto.setDepartmentId(department.getId());
+                dto.setDepartmentCode(department.getDepartmentCode());
+                dto.setDepartmentName(department.getDepartmentName());
+                response.add(dto);
+            }
+        }
 
         return ResponseEntity.ok(response);
     }
@@ -437,22 +468,32 @@ DepartMentSemesters depSem=departMentSemestersRepo.findById(dto.getDepartmentSem
             dto.setCourseType(course.getCourseType());
           //  dto.setProgramId(course.getProgramId());
           //  dto.setDepartmentId(course.getDepartmentId());
+            dto.setDepartmentSemesterId(course.getDepartmentSemesterId());
             dto.setIsElective(course.getIsElective());
             dto.setIsActive(course.getIsActive());
             dto.setSyllabusPdfUrl(course.getSyllabusPdfUrl());
             dto.setCreatedAt(course.getCreatedAt());
             dto.setUpdatedAt(course.getUpdatedAt());
 
-            DepartMentSemesters departMentSemesters=departMentSemestersRepo.findById(course.getDepartmentSemesterId()).orElse(null);
+            DepartMentSemesters departMentSemesters = course.getDepartmentSemesterId() != null
+                    ? departMentSemestersRepo.findById(course.getDepartmentSemesterId()).orElse(null)
+                    : null;
 
+            dto.setSemester(departMentSemesters != null ? departMentSemesters.getSemester() : null);
 
-                dto.setSemester(departMentSemesters!=null?departMentSemesters.getSemester():null);
-                Department department=departmentRepository.findById(departMentSemesters.getDepartmentId()).orElse(null);
-                dto.setDepartmentName(department!=null?department.getDepartmentName():null);
-                dto.setDepartmentCode(department!=null?department.getDepartmentCode():null);
-                Programs programs=programsRepository.findById(department.getProgramId()).orElse(null);
-                dto.setProgramName(programs!=null?programs.getName():null);
-                dto.setProgramCode(programs!=null?programs.getProgramCode():null);
+            Department department = (departMentSemesters != null && departMentSemesters.getDepartmentId() != null)
+                    ? departmentRepository.findById(departMentSemesters.getDepartmentId()).orElse(null)
+                    : null;
+
+            dto.setDepartmentName(department != null ? department.getDepartmentName() : null);
+            dto.setDepartmentCode(department != null ? department.getDepartmentCode() : null);
+
+            Programs programs = (department != null && department.getProgramId() != null)
+                    ? programsRepository.findById(department.getProgramId()).orElse(null)
+                    : null;
+
+            dto.setProgramName(programs != null ? programs.getName() : null);
+            dto.setProgramCode(programs != null ? programs.getProgramCode() : null);
 
 
             /*if (course.getProgram() != null) {

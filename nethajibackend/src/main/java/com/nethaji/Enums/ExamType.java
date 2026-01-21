@@ -1,6 +1,11 @@
 package com.nethaji.Enums;
 
 public enum ExamType {
-
-    COLLAGEEXAM,SEMESTEREXAMES
+    INTERNAL,
+    MIDTERM,
+    FINAL,
+    ASSIGNMENT,
+    QUIZ,
+    COLLAGEEXAM,
+    SEMESTEREXAMES
 }

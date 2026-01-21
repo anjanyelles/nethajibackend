@@ -1,5 +1,6 @@
 package com.nethaji.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nethaji.Enums.Gender;
 import com.nethaji.Enums.StudentStatus;
 import jakarta.persistence.*;
@@ -104,6 +105,7 @@ public class StudentProfile{
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JsonIgnore
     private User user;
 
 

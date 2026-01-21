@@ -14,7 +14,7 @@ import java.util.UUID;
 public class User {
 
     public static enum UserType{
-        ADMIN, STUDENT,LECTURER
+        SUPER_ADMIN, ADMIN, STUDENT, LECTURER
     }
 
     private static final long serialVersionUID = 1L;
@@ -42,7 +42,7 @@ public class User {
     @Column(name = "country_code",nullable = true)
     private String countryCode;
 
-    @Column(name = "passwordHash", nullable = true)
+    @Column(name = "password_hash", nullable = true)
     private String passwordHash;
 
     @Column(name = "user_type", nullable = false)

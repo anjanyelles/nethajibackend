@@ -20,6 +20,7 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/health").permitAll()
                         .requestMatchers(
@@ -30,8 +31,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/api/nethaji-service/auth/**").permitAll()
-                        .requestMatchers("/api/nethaji-service/acadamic/**").permitAll()
+                        .requestMatchers("/api/nethaji-service/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .httpBasic(basic -> basic.disable());
@@ -46,7 +46,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(false);
 

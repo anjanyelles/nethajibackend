@@ -23,6 +23,13 @@ public interface StudentEducationInfoRepository extends JpaRepository<StudentEdu
     @Query("SELECT s FROM StudentEducationInfo s WHERE s.programId = :programId AND s.semester = :semester AND s.isActive = true")
     List<StudentEducationInfo> findActiveStudentsByProgramAndSemester(@Param("programId") UUID programId, @Param("semester") Integer semester);
 
+    @Query("SELECT s FROM StudentEducationInfo s WHERE s.programId = :programId AND s.semester = :semester AND s.graduationType = :graduationType AND s.isActive = true")
+    List<StudentEducationInfo> findActiveStudentsByProgramAndSemesterAndGraduationType(
+            @Param("programId") UUID programId,
+            @Param("semester") Integer semester,
+            @Param("graduationType") String graduationType
+    );
+
 
 
    /* @Query("SELECT s FROM StudentSemesters s WHERE s.studentId = :studentId AND s.isActive = true")
