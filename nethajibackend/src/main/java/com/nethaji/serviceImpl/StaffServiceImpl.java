@@ -153,14 +153,17 @@ public class StaffServiceImpl implements StaffService {
             return ResponseEntity.ok(Collections.emptyList());
         }
 
-        List<StudentEducationInfo> active = studentEducationInfoRepository.findActiveStudentsByProgramAndSemester(department.getProgramId(), depSem.getSemester());
-        if (active == null || active.isEmpty()) {
+        List<StudentSection> sections = studentSectionRepository.findActiveByDepartmentIdAndSemester(depSem.getDepartmentId(), depSem.getSemester());
+        if (sections == null || sections.isEmpty()) {
             return ResponseEntity.ok(Collections.emptyList());
         }
 
         List<StudentRosterDTO> roster = new ArrayList<>();
-        for (StudentEducationInfo se : active) {
-            User student = userRepository.findById(se.getStudentId()).orElse(null);
+        for (StudentSection ss : sections) {
+            if (ss == null || ss.getStudentId() == null) {
+                continue;
+            }
+            User student = userRepository.findById(ss.getStudentId()).orElse(null);
             if (student == null) {
                 continue;
             }
@@ -171,12 +174,7 @@ public class StaffServiceImpl implements StaffService {
             dto.setLastName(student.getLastName());
             dto.setEnrollmentNumber(student.getEnrollmentNumber());
             dto.setEmail(student.getEmail());
-
-            StudentSection ss = studentSectionRepository.findActiveSectionByStudentAndSemester(student.getId(), depSem.getSemester());
-            if (ss != null) {
-                dto.setSectionName(ss.getSectionName());
-            }
-
+            dto.setSectionName(ss.getSectionName());
             roster.add(dto);
         }
 
@@ -192,6 +190,26 @@ public class StaffServiceImpl implements StaffService {
         boolean allowed = lecturerCourseAssignmentRepository.existsByLecturerIdAndCourseIdAndIsActiveTrue(lecturerId, courseId);
         if (!allowed) {
             return ResponseEntity.status(403).body(Collections.emptyList());
+        }
+
+        ResponseEntity<List<StudentRosterDTO>> rosterResp = getCourseRoster(lecturerId, courseId);
+        List<StudentRosterDTO> roster = rosterResp.getBody();
+        if (roster == null || roster.isEmpty()) {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+        Set<UUID> allowedStudentIds = new HashSet<>();
+        for (StudentRosterDTO s : roster) {
+            if (s != null && s.getStudentId() != null) {
+                allowedStudentIds.add(s.getStudentId());
+            }
+        }
+
+        if (bulkAttendanceDTO.getStudents() != null) {
+            for (BulkAttendanceDTO.StudentAttendanceEntry e : bulkAttendanceDTO.getStudents()) {
+                if (e == null || e.getStudentId() == null || !allowedStudentIds.contains(e.getStudentId())) {
+                    return ResponseEntity.badRequest().body(Collections.emptyList());
+                }
+            }
         }
 
         bulkAttendanceDTO.setCourseId(courseId);
@@ -210,6 +228,26 @@ public class StaffServiceImpl implements StaffService {
         boolean allowed = lecturerCourseAssignmentRepository.existsByLecturerIdAndCourseIdAndIsActiveTrue(lecturerId, courseId);
         if (!allowed) {
             return ResponseEntity.status(403).body(Collections.emptyList());
+        }
+
+        ResponseEntity<List<StudentRosterDTO>> rosterResp = getCourseRoster(lecturerId, courseId);
+        List<StudentRosterDTO> roster = rosterResp.getBody();
+        if (roster == null || roster.isEmpty()) {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+        Set<UUID> allowedStudentIds = new HashSet<>();
+        for (StudentRosterDTO s : roster) {
+            if (s != null && s.getStudentId() != null) {
+                allowedStudentIds.add(s.getStudentId());
+            }
+        }
+
+        if (bulkMarksDTO.getStudents() != null) {
+            for (BulkMarksDTO.StudentMarksEntry e : bulkMarksDTO.getStudents()) {
+                if (e == null || e.getStudentId() == null || !allowedStudentIds.contains(e.getStudentId())) {
+                    return ResponseEntity.badRequest().body(Collections.emptyList());
+                }
+            }
         }
 
         bulkMarksDTO.setCourseId(courseId);

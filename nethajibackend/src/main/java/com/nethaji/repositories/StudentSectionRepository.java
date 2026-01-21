@@ -21,4 +21,8 @@ public interface StudentSectionRepository extends JpaRepository<StudentSection, 
 
     @Query(value = "SELECT * FROM student_sections s WHERE s.section_name = :section AND s.semester = :semester AND s.status = true ",nativeQuery = true)
     List<StudentSection> findBySectionNameAndSemester(@Param("section") String section,@Param("semester") Integer semester);
+
+
+    @Query(value = "SELECT * FROM student_sections s WHERE s.department_id = :departmentId AND s.semester = :semester AND s.status = true ", nativeQuery = true)
+    List<StudentSection> findActiveByDepartmentIdAndSemester(@Param("departmentId") UUID departmentId, @Param("semester") Integer semester);
 }

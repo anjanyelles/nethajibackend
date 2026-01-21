@@ -312,8 +312,55 @@ public class DataSeedController {
         created += lecturerRes[0];
         updated += lecturerRes[1];
 
+        // Seed staff from Nethaji Degree College staff sheet (Principal/Correspondent/Lecturers/Non-Teaching)
+        // All seeded accounts share password: admin123
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440211"), "STAFF001", "srikanth.r@nethaji.edu", "R.", "Srikanth", "9000000001", "+91", User.UserType.ADMIN)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440211"), "STAFF001", "srikanth.r@nethaji.edu", "R.", "Srikanth", "9000000001", "+91", User.UserType.ADMIN)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440212"), "STAFF002", "jagan.kumarrao@nethaji.edu", "N.", "Jagan Kumar Rao", "9000000002", "+91", User.UserType.ADMIN)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440212"), "STAFF002", "jagan.kumarrao@nethaji.edu", "N.", "Jagan Kumar Rao", "9000000002", "+91", User.UserType.ADMIN)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440213"), "STAFF003", "sumalatha.kola@nethaji.edu", "Kola", "Sumalatha", "9000000003", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440213"), "STAFF003", "sumalatha.kola@nethaji.edu", "Kola", "Sumalatha", "9000000003", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440214"), "STAFF004", "devaraju.n@nethaji.edu", "N.", "Devaraju", "9000000004", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440214"), "STAFF004", "devaraju.n@nethaji.edu", "N.", "Devaraju", "9000000004", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440215"), "STAFF005", "santhosh.k@nethaji.edu", "K.", "Santhosh", "9000000005", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440215"), "STAFF005", "santhosh.k@nethaji.edu", "K.", "Santhosh", "9000000005", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440216"), "STAFF006", "sandhya.ch@nethaji.edu", "CH.", "Sandhya", "9000000006", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440216"), "STAFF006", "sandhya.ch@nethaji.edu", "CH.", "Sandhya", "9000000006", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440217"), "STAFF007", "azeem.pasha@nethaji.edu", "MD.", "Azeem Pasha", "9000000007", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440217"), "STAFF007", "azeem.pasha@nethaji.edu", "MD.", "Azeem Pasha", "9000000007", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440218"), "STAFF008", "venu.g@nethaji.edu", "G.", "Venu", "9000000008", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440218"), "STAFF008", "venu.g@nethaji.edu", "G.", "Venu", "9000000008", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440219"), "STAFF009", "jagan.b@nethaji.edu", "B.", "Jagan", "9000000009", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440219"), "STAFF009", "jagan.b@nethaji.edu", "B.", "Jagan", "9000000009", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440220"), "STAFF010", "ganesh.b@nethaji.edu", "B.", "Ganesh", "9000000010", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440220"), "STAFF010", "ganesh.b@nethaji.edu", "B.", "Ganesh", "9000000010", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440221"), "STAFF011", "karunasri.m@nethaji.edu", "M.", "Karunasri", "9000000011", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440221"), "STAFF011", "karunasri.m@nethaji.edu", "M.", "Karunasri", "9000000011", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440222"), "STAFF012", "maruthi.g@nethaji.edu", "G.", "Maruthi", "9000000012", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440222"), "STAFF012", "maruthi.g@nethaji.edu", "G.", "Maruthi", "9000000012", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440223"), "STAFF013", "kavya.m@nethaji.edu", "M.", "Kavya", "9000000013", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440223"), "STAFF013", "kavya.m@nethaji.edu", "M.", "Kavya", "9000000013", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440224"), "STAFF014", "kantharao.s@nethaji.edu", "S.", "Kantharao", "9000000014", "+91", User.UserType.LECTURER)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440224"), "STAFF014", "kantharao.s@nethaji.edu", "S.", "Kantharao", "9000000014", "+91", User.UserType.LECTURER)[1];
+
+        created += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440225"), "STAFF015", "praveen.p@nethaji.edu", "P.", "Praveen", "9000000015", "+91", User.UserType.ADMIN)[0];
+        updated += ensureUserByEmail(UUID.fromString("550e8400-e29b-41d4-a716-446655440225"), "STAFF015", "praveen.p@nethaji.edu", "P.", "Praveen", "9000000015", "+91", User.UserType.ADMIN)[1];
+
         // Ensure Students
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 6; i++) {
             UUID studentId = UUID.fromString("550e8400-e29b-41d4-a716-44665544030" + i);
             int[] studentRes = ensureUserByEmail(
                     studentId,
@@ -470,129 +517,428 @@ public class DataSeedController {
     }
 
     private void seedStaffProfiles(List<String> messages) {
-        int created = 0;
+        int upserted = 0;
 
-        List<User> staffUsers = userRepository.findUsersByType(User.UserType.LECTURER);
-        for (User staff : staffUsers) {
-            StaffProfile existing = staffProfileRepo.findByUserId(staff.getId());
-            if (existing != null) {
-                continue;
-            }
+        upserted += upsertStaffProfileByEmail(
+                "srikanth.r@nethaji.edu",
+                "R.",
+                "Srikanth",
+                "Commerce",
+                "Principal",
+                "M.com, B.Ed",
+                16L,
+                "COMMERCE"
+        );
 
-            StaffProfile sp = new StaffProfile();
-            sp.setUserId(staff.getId());
-            sp.setFirstName(staff.getFirstName() != null ? staff.getFirstName() : "Staff");
-            sp.setLastName(staff.getLastName() != null ? staff.getLastName() : "User");
-            sp.setDepartment("CSE");
-            sp.setDesignation("Lecturer");
-            sp.setJoiningDate(LocalDate.now().minusYears(2));
-            sp.setCreatedAt(new Date());
-            sp.setUpdatedAt(new Date());
-            sp.setEmployeeSubject("PHYSICS");
-            staffProfileRepo.save(sp);
-            created++;
-        }
+        upserted += upsertStaffProfileByEmail(
+                "jagan.kumarrao@nethaji.edu",
+                "N.",
+                "Jagan Kumar Rao",
+                "Computers",
+                "Correspondent",
+                "M.com, PGDMISCA",
+                23L,
+                "COMPUTERS"
+        );
 
-        if (created > 0) {
-            messages.add("✓ Seeded " + created + " Staff Profiles");
+        upserted += upsertStaffProfileByEmail(
+                "sumalatha.kola@nethaji.edu",
+                "Kola",
+                "Sumalatha",
+                "Telugu",
+                "Lecturer",
+                "MA (TEL), B.Ed",
+                8L,
+                "TELUGU"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "devaraju.n@nethaji.edu",
+                "N.",
+                "Devaraju",
+                "Statistics",
+                "Lecturer",
+                "M.Sc(Stats), B.Ed",
+                10L,
+                "STATISTICS"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "santhosh.k@nethaji.edu",
+                "K.",
+                "Santhosh",
+                "Mathematics",
+                "Lecturer",
+                "M.Sc (Maths)",
+                11L,
+                "MATHEMATICS"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "sandhya.ch@nethaji.edu",
+                "CH.",
+                "Sandhya",
+                "Physics",
+                "Lecturer",
+                "M.Sc (Phy)",
+                3L,
+                "PHYSICS"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "azeem.pasha@nethaji.edu",
+                "MD.",
+                "Azeem Pasha",
+                "Computers",
+                "Lecturer",
+                "M.Sc (Computers)",
+                13L,
+                "COMPUTERS"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "venu.g@nethaji.edu",
+                "G.",
+                "Venu",
+                "Computers",
+                "Lecturer",
+                "MCA",
+                10L,
+                "COMPUTERS"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "jagan.b@nethaji.edu",
+                "B.",
+                "Jagan",
+                "Commerce",
+                "Lecturer",
+                "M.com",
+                13L,
+                "COMMERCE"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "ganesh.b@nethaji.edu",
+                "B.",
+                "Ganesh",
+                "Commerce",
+                "Lecturer",
+                "M.com, B.Ed",
+                8L,
+                "COMMERCE"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "karunasri.m@nethaji.edu",
+                "M.",
+                "Karunasri",
+                "Botony",
+                "Lecturer",
+                "M.Sc (Bot)",
+                2L,
+                "BOTONY"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "maruthi.g@nethaji.edu",
+                "G.",
+                "Maruthi",
+                "Chemistry",
+                "Lecturer",
+                "M.Sc (Chemistry)",
+                8L,
+                "CHEMISTRY"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "kavya.m@nethaji.edu",
+                "M.",
+                "Kavya",
+                "Food Science",
+                "Lecturer",
+                "M.Sc, B.Ed",
+                2L,
+                "FOOD_SCIENCE"
+        );
+
+        upserted += upsertStaffProfileByEmail(
+                "kantharao.s@nethaji.edu",
+                "S.",
+                "Kantharao",
+                "English",
+                "Lecturer",
+                "B.Ed, MA(ENG)",
+                9L,
+                "ENGLISH"
+        );
+
+        // Non-teaching (kept as ADMIN userType for now; profile used for listing)
+        upserted += upsertStaffProfileByEmail(
+                "praveen.p@nethaji.edu",
+                "P.",
+                "Praveen",
+                "Administration",
+                "Clerk",
+                "B.COM",
+                2L,
+                "ADMIN"
+        );
+
+        if (upserted > 0) {
+            messages.add("✓ Upserted Staff Profiles (" + upserted + " applied)");
         } else {
             messages.add("⚠ Staff Profiles already exist");
         }
     }
 
+    private int upsertStaffProfileByEmail(String email,
+                                         String firstName,
+                                         String lastName,
+                                         String department,
+                                         String designation,
+                                         String qualification,
+                                         Long experienceYears,
+                                         String employeeSubject) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            return 0;
+        }
+        User user = userOpt.get();
+
+        StaffProfile existing = staffProfileRepo.findByUserId(user.getId());
+        if (existing != null) {
+            boolean changed = false;
+            if (existing.getFirstName() == null || existing.getFirstName().isEmpty()) {
+                existing.setFirstName(firstName);
+                changed = true;
+            }
+            if (existing.getLastName() == null || existing.getLastName().isEmpty()) {
+                existing.setLastName(lastName);
+                changed = true;
+            }
+            if (existing.getDepartment() == null || existing.getDepartment().isEmpty()) {
+                existing.setDepartment(department);
+                changed = true;
+            }
+            if (existing.getDesignation() == null || existing.getDesignation().isEmpty()) {
+                existing.setDesignation(designation);
+                changed = true;
+            }
+            if (existing.getEmployeeSubject() == null || existing.getEmployeeSubject().isEmpty()) {
+                existing.setEmployeeSubject(employeeSubject);
+                changed = true;
+            }
+            if (existing.getQualification() == null || existing.getQualification().isEmpty()) {
+                existing.setQualification(qualification);
+                changed = true;
+            }
+            if (existing.getEmail() == null || existing.getEmail().isEmpty()) {
+                existing.setEmail(user.getEmail());
+                changed = true;
+            }
+            if (existing.getPhoneNumber() == null || existing.getPhoneNumber().isEmpty()) {
+                existing.setPhoneNumber(user.getMobileNumber());
+                changed = true;
+            }
+            if (existing.getExperienceYears() == null) {
+                existing.setExperienceYears(experienceYears);
+                changed = true;
+            }
+            if (existing.getJoiningDate() == null) {
+                existing.setJoiningDate(LocalDate.now().minusYears(2));
+                changed = true;
+            }
+            if (existing.getCreatedAt() == null) {
+                existing.setCreatedAt(new Date());
+                changed = true;
+            }
+            existing.setUpdatedAt(new Date());
+            changed = true;
+
+            if (changed) {
+                staffProfileRepo.save(existing);
+                return 1;
+            }
+            return 0;
+        }
+
+        StaffProfile sp = new StaffProfile();
+        sp.setUserId(user.getId());
+        sp.setFirstName(firstName);
+        sp.setLastName(lastName);
+        sp.setDepartment(department);
+        sp.setDesignation(designation);
+        sp.setQualification(qualification);
+        sp.setEmail(user.getEmail());
+        sp.setPhoneNumber(user.getMobileNumber());
+        sp.setExperienceYears(experienceYears);
+        sp.setEmployeeSubject(employeeSubject);
+        sp.setJoiningDate(LocalDate.now().minusYears(2));
+        sp.setCreatedAt(new Date());
+        sp.setUpdatedAt(new Date());
+        staffProfileRepo.save(sp);
+        return 1;
+    }
+
     private void seedStudentPrograms(List<String> messages) {
-        int created = 0;
+        int upserted = 0;
         UUID bscId = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+        UUID bcomId = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+        UUID bbaId = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
 
         List<User> students = userRepository.findUsersByType(User.UserType.STUDENT);
         for (User student : students) {
-            StudentPrograms existing = studentProgramsRepository.findByStudentIdAndIsActiveTrue(student.getId());
-            if (existing != null) {
+            if (student == null || student.getId() == null) {
                 continue;
             }
 
-            StudentPrograms sp = new StudentPrograms();
-            sp.setStudentId(student.getId());
-            sp.setProgramId(bscId);
-            sp.setEnrollmentStatus(EnrollmentStatus.NOT_STARTED);
-            sp.setActive(true);
-            sp.setCreatedAt(new Date());
+            SeedStudentMapping mapping = getSeedStudentMapping(student);
+            UUID programId = mapping != null ? mapping.programId : bscId;
+
+            StudentPrograms sp = studentProgramsRepository.findByStudentIdAndIsActiveTrue(student.getId());
+            if (sp == null) {
+                sp = new StudentPrograms();
+                sp.setStudentId(student.getId());
+                sp.setEnrollmentStatus(EnrollmentStatus.NOT_STARTED);
+                sp.setActive(true);
+                sp.setCreatedAt(new Date());
+            }
+            sp.setProgramId(programId);
             sp.setUpdatedAt(new Date());
             studentProgramsRepository.save(sp);
-            created++;
+            upserted++;
         }
 
-        if (created > 0) {
-            messages.add("✓ Seeded " + created + " Student Programs");
+        if (upserted > 0) {
+            messages.add("✓ Upserted " + upserted + " Student Programs");
         } else {
             messages.add("⚠ Student Programs already exist");
         }
     }
 
     private void seedStudentEducationInfo(List<String> messages) {
-        int created = 0;
-        UUID bscId = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
-
+        int upserted = 0;
         List<User> students = userRepository.findUsersByType(User.UserType.STUDENT);
         for (User student : students) {
-            if (studentEducationInfoRepository.findByStudentIdAndSemesterAndIsActiveTrue(student.getId(), 1).isPresent()) {
+            if (student == null || student.getId() == null) {
                 continue;
             }
 
-            StudentEducationInfo info = new StudentEducationInfo();
-            info.setStudentId(student.getId());
-            info.setSemester(1);
-            info.setProgramId(bscId);
-            info.setBranch(Branch.BSC);
-            info.setGraduationType("BSC_DS");
-            info.setSemesterStatus(SemesterStatus.NOT_STARTED);
-            info.setActive(true);
-            info.setCreatedAt(new Date());
+            SeedStudentMapping mapping = getSeedStudentMapping(student);
+            StudentEducationInfo info = studentEducationInfoRepository
+                    .findByStudentIdAndSemesterAndIsActiveTrue(student.getId(), 1)
+                    .orElse(null);
+
+            if (info == null) {
+                info = new StudentEducationInfo();
+                info.setStudentId(student.getId());
+                info.setSemester(1);
+                info.setSemesterStatus(SemesterStatus.NOT_STARTED);
+                info.setActive(true);
+                info.setCreatedAt(new Date());
+            }
+
+            info.setProgramId(mapping != null ? mapping.programId : UUID.fromString("550e8400-e29b-41d4-a716-446655440001"));
+            info.setBranch(mapping != null ? mapping.branch : Branch.BSC);
+            info.setGraduationType(mapping != null ? mapping.graduationType : "BSC_DS");
             info.setUpdatedAt(new Date());
             studentEducationInfoRepository.save(info);
-            created++;
+            upserted++;
         }
 
-        if (created > 0) {
-            messages.add("✓ Seeded " + created + " Student Education Info");
+        if (upserted > 0) {
+            messages.add("✓ Upserted " + upserted + " Student Education Info");
         } else {
             messages.add("⚠ Student Education Info already exist");
         }
     }
 
     private void seedStudentSections(List<String> messages) {
-        int created = 0;
-
-        UUID bscDsDeptId = UUID.fromString("550e8400-e29b-41d4-a716-446655440011");
+        int upserted = 0;
 
         List<User> students = userRepository.findUsersByType(User.UserType.STUDENT);
         for (User student : students) {
-            StudentSection existing = studentSectionRepository.findActiveSectionByStudentAndSemester(student.getId(), 1);
-            if (existing != null) {
+            if (student == null || student.getId() == null) {
                 continue;
             }
 
-            StudentSection section = new StudentSection();
-            section.setStudentId(student.getId());
+            SeedStudentMapping mapping = getSeedStudentMapping(student);
+            StudentSection section = studentSectionRepository.findActiveSectionByStudentAndSemester(student.getId(), 1);
+            if (section == null) {
+                section = new StudentSection();
+                section.setStudentId(student.getId());
+                section.setStatus(true);
+                section.setSemester(1);
+                section.setSemesterStartDate(new Date());
+                section.setSemesterYear("2024-2025");
+                section.setCreatedAt(new Date());
+            }
+
             section.setSectionName("A");
-            section.setProgramCode("BSC");
-            section.setDepartmentId(bscDsDeptId);
-            section.setStatus(true);
-            section.setSemester(1);
-            section.setBranch(Branch.BSC);
-            section.setSemesterStartDate(new Date());
-            section.setSemesterYear("2024-2025");
-            section.setCreatedAt(new Date());
+            section.setDepartmentId(mapping != null ? mapping.departmentId : UUID.fromString("550e8400-e29b-41d4-a716-446655440011"));
+            section.setProgramCode(mapping != null ? mapping.programCode : "BSC");
+            section.setBranch(mapping != null ? mapping.branch : Branch.BSC);
             section.setUpdatedAt(new Date());
             studentSectionRepository.save(section);
-            created++;
+            upserted++;
         }
 
-        if (created > 0) {
-            messages.add("✓ Seeded " + created + " Student Sections");
+        if (upserted > 0) {
+            messages.add("✓ Upserted " + upserted + " Student Sections");
         } else {
             messages.add("⚠ Student Sections already exist");
         }
+    }
+
+    private static class SeedStudentMapping {
+        private final UUID programId;
+        private final String programCode;
+        private final UUID departmentId;
+        private final Branch branch;
+        private final String graduationType;
+
+        private SeedStudentMapping(UUID programId, String programCode, UUID departmentId, Branch branch, String graduationType) {
+            this.programId = programId;
+            this.programCode = programCode;
+            this.departmentId = departmentId;
+            this.branch = branch;
+            this.graduationType = graduationType;
+        }
+    }
+
+    private SeedStudentMapping getSeedStudentMapping(User student) {
+        UUID bscId = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+        UUID bcomId = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+        UUID bbaId = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
+
+        UUID bscDsDeptId = UUID.fromString("550e8400-e29b-41d4-a716-446655440011");
+        UUID bscFsDeptId = UUID.fromString("550e8400-e29b-41d4-a716-446655440012");
+        UUID bcomCaDeptId = UUID.fromString("550e8400-e29b-41d4-a716-446655440013");
+        UUID bcomBaDeptId = UUID.fromString("550e8400-e29b-41d4-a716-446655440014");
+        UUID bbaAiDeptId = UUID.fromString("550e8400-e29b-41d4-a716-446655440015");
+        UUID bscMpcsDeptId = UUID.fromString("550e8400-e29b-41d4-a716-446655440016");
+
+        String email = student != null ? student.getEmail() : null;
+        if (email == null) {
+            return new SeedStudentMapping(bscId, "BSC", bscDsDeptId, Branch.BSC, "BSC_DS");
+        }
+        if (email.startsWith("student2")) {
+            return new SeedStudentMapping(bscId, "BSC", bscFsDeptId, Branch.BSC, "BSC_FS");
+        }
+        if (email.startsWith("student3")) {
+            return new SeedStudentMapping(bscId, "BSC", bscMpcsDeptId, Branch.BSC, "BSC_MPCS");
+        }
+        if (email.startsWith("student4")) {
+            return new SeedStudentMapping(bbaId, "BBA", bbaAiDeptId, Branch.BBA, "BBA_AI");
+        }
+        if (email.startsWith("student6")) {
+            return new SeedStudentMapping(bcomId, "BCOM", bcomBaDeptId, Branch.BCOM, "BCOM_BA");
+        }
+        if (email.startsWith("student5")) {
+            return new SeedStudentMapping(bcomId, "BCOM", bcomCaDeptId, Branch.BCOM, "BCOM_CA");
+        }
+        return new SeedStudentMapping(bscId, "BSC", bscDsDeptId, Branch.BSC, "BSC_DS");
     }
 
     private void seedDepartmentSemesters(List<String> messages) {
@@ -971,68 +1317,155 @@ public class DataSeedController {
                 .executeUpdate();
 
         messages.add("✓ Upserted Courses (" + upserted + " applied)");
+
+        // Extra courses required for staff mapping (do NOT override existing course_code mappings)
+        upserted += upsertExtraCourse("TEL101", "Telugu", "Telugu language subject", bcomBaSem1Id);
+        upserted += upsertExtraCourse("ENG101", "English", "English language subject", bcomBaSem1Id);
+        upserted += upsertExtraCourse("CHEM101", "Chemistry", "Chemistry subject", bscFsSem1Id);
+        upserted += upsertExtraCourse("BOT101", "Botony", "Botany subject", bscFsSem1Id);
+        upserted += upsertExtraCourse("CSE101", "Computers", "Computer Science subject", bscDsSem1Id);
+
+        messages.add("✓ Upserted Additional Courses (" + upserted + " total applied)");
+    }
+
+    private int upsertExtraCourse(String courseCode, String name, String description, UUID departmentSemesterId) {
+        Optional<Course> existing = courseRepository.findByCourseCodeIgnoreCase(courseCode);
+        UUID id = existing.map(Course::getId)
+                .orElse(UUID.nameUUIDFromBytes(("extra_course|" + courseCode + "|" + departmentSemesterId).getBytes()));
+
+        return entityManager.createNativeQuery(
+                        "INSERT INTO course (id, name, course_code, description, course_type, credits, department_semester_id, is_elective, is_active, syllabus_pdf_url, created_at, updated_at) " +
+                                "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, false, true, NULL, now(), now()) " +
+                                "ON CONFLICT (id) DO UPDATE SET " +
+                                "name = EXCLUDED.name, " +
+                                "course_code = EXCLUDED.course_code, " +
+                                "description = EXCLUDED.description, " +
+                                "course_type = EXCLUDED.course_type, " +
+                                "credits = EXCLUDED.credits, " +
+                                "department_semester_id = EXCLUDED.department_semester_id, " +
+                                "is_active = EXCLUDED.is_active, " +
+                                "updated_at = now()"
+                )
+                .setParameter(1, id)
+                .setParameter(2, name)
+                .setParameter(3, courseCode)
+                .setParameter(4, description)
+                .setParameter(5, com.nethaji.Enums.CourseType.THEORY.name())
+                .setParameter(6, 4)
+                .setParameter(7, departmentSemesterId)
+                .executeUpdate();
     }
 
     private void seedLecturerCourseAssignments(List<String> messages) {
-        UUID lecturerId = UUID.fromString("550e8400-e29b-41d4-a716-446655440201");
-
-        if (!userRepository.existsById(lecturerId)) {
-            messages.add("⚠ Cannot seed lecturer course assignments - Lecturer user not found");
-            return;
-        }
-
-        List<UUID> courseIds = new ArrayList<>();
-        UUID preferredCourseId = UUID.fromString("550e8400-e29b-41d4-a716-446655440701");
-        if (courseRepository.existsById(preferredCourseId)) {
-            courseIds.add(preferredCourseId);
-        }
-
-        if (courseIds.isEmpty()) {
-            List<Course> any = courseRepository.findAll();
-            if (any == null || any.isEmpty()) {
-                messages.add("⚠ Cannot seed lecturer course assignments - No courses found");
-                return;
-            }
-            courseIds.add(any.get(0).getId());
-        }
-
-        // Add a second course if available (helps testing My Courses UI)
-        if (courseIds.size() < 2) {
-            List<Course> any = courseRepository.findAll();
-            for (Course c : any) {
-                if (c != null && c.getId() != null && !courseIds.contains(c.getId())) {
-                    courseIds.add(c.getId());
-                    break;
-                }
-            }
-        }
-
         int upserted = 0;
-        for (UUID courseId : courseIds) {
-            UUID assignmentId = UUID.nameUUIDFromBytes(("lecturer_course_assignment|" + lecturerId + "|" + courseId).getBytes());
-            upserted += entityManager.createNativeQuery(
-                            "INSERT INTO lecturer_course_assignments (id, lecturer_id, course_id, assignment_type, subject_type, is_active, created_at, updated_at) " +
-                                    "VALUES (?1, ?2, ?3, ?4, NULL, true, now(), now()) " +
-                                    "ON CONFLICT (id) DO UPDATE SET " +
-                                    "lecturer_id = EXCLUDED.lecturer_id, " +
-                                    "course_id = EXCLUDED.course_id, " +
-                                    "assignment_type = EXCLUDED.assignment_type, " +
-                                    "is_active = EXCLUDED.is_active, " +
-                                    "updated_at = now()"
-                    )
-                    .setParameter(1, assignmentId)
-                    .setParameter(2, lecturerId)
-                    .setParameter(3, courseId)
-                    .setParameter(4, com.nethaji.entity.LecturerDetails.AssignmentType.LECTURER.name())
-                    .executeUpdate();
-        }
+
+        // Lecturer mappings to real courses
+        upserted += upsertLecturerCourseByEmailAndCourseCode("prof.sharma@nethaji.edu", "DS101");
+        upserted += upsertLecturerCourseByEmailAndCourseCode("devaraju.n@nethaji.edu", "STAT101");
+
+        upserted += upsertLecturerCourseByEmailAndCourseCode("santhosh.k@nethaji.edu", "MATH101");
+        upserted += upsertLecturerCourseByEmailAndCourseCode("sandhya.ch@nethaji.edu", "PHY101");
+
+        upserted += upsertLecturerCourseByEmailAndCourseCode("kavya.m@nethaji.edu", "FC101");
+        upserted += upsertLecturerCourseByEmailAndCourseCode("maruthi.g@nethaji.edu", "CHEM101");
+        upserted += upsertLecturerCourseByEmailAndCourseCode("karunasri.m@nethaji.edu", "BOT101");
+
+        upserted += upsertLecturerCourseByEmailAndCourseCode("sumalatha.kola@nethaji.edu", "TEL101");
+        upserted += upsertLecturerCourseByEmailAndCourseCode("kantharao.s@nethaji.edu", "ENG101");
+
+        // Commerce lecturers mapped to B.Com (CA) semester 1 courses
+        upserted += upsertLecturerCourseByEmailAndCourseCode("jagan.b@nethaji.edu", "ACC101");
+        upserted += upsertLecturerCourseByEmailAndCourseCode("ganesh.b@nethaji.edu", "ECO101");
+
+        // Computers lecturers mapped to seed Computers course
+        upserted += upsertLecturerCourseByEmailAndCourseCode("azeem.pasha@nethaji.edu", "CSE101");
+        upserted += upsertLecturerCourseByEmailAndCourseCode("venu.g@nethaji.edu", "CSE101");
 
         messages.add("✓ Seeded Lecturer Course Assignments (" + upserted + " applied)");
     }
 
+    private int upsertLecturerCourseByEmailAndCourseCode(String lecturerEmail, String courseCode) {
+        Optional<User> lecturerOpt = userRepository.findByEmail(lecturerEmail);
+        if (lecturerOpt.isEmpty()) {
+            return 0;
+        }
+        User lecturer = lecturerOpt.get();
+        if (lecturer.getUserType() != User.UserType.LECTURER) {
+            return 0;
+        }
+
+        Optional<Course> courseOpt = courseRepository.findByCourseCodeIgnoreCase(courseCode);
+        if (courseOpt.isEmpty()) {
+            return 0;
+        }
+        UUID courseId = courseOpt.get().getId();
+
+        UUID assignmentId = UUID.nameUUIDFromBytes(("lecturer_course_assignment|" + lecturer.getId() + "|" + courseId).getBytes());
+        return entityManager.createNativeQuery(
+                        "INSERT INTO lecturer_course_assignments (id, lecturer_id, course_id, assignment_type, subject_type, is_active, created_at, updated_at) " +
+                                "VALUES (?1, ?2, ?3, ?4, NULL, true, now(), now()) " +
+                                "ON CONFLICT ON CONSTRAINT uk_lecturer_course DO UPDATE SET " +
+                                "assignment_type = EXCLUDED.assignment_type, " +
+                                "is_active = EXCLUDED.is_active, " +
+                                "updated_at = now()"
+                )
+                .setParameter(1, assignmentId)
+                .setParameter(2, lecturer.getId())
+                .setParameter(3, courseId)
+                .setParameter(4, com.nethaji.entity.LecturerDetails.AssignmentType.LECTURER.name())
+                .executeUpdate();
+    }
+
+    private List<UUID> getRosterStudentIdsForCourse(Course course) {
+        if (course == null || course.getDepartmentSemesterId() == null) {
+            return Collections.emptyList();
+        }
+
+        DepartMentSemesters depSem = departMentSemestersRepo.findById(course.getDepartmentSemesterId()).orElse(null);
+        if (depSem == null || depSem.getDepartmentId() == null || depSem.getSemester() == null) {
+            return Collections.emptyList();
+        }
+
+        List<StudentSection> sections = studentSectionRepository.findActiveByDepartmentIdAndSemester(depSem.getDepartmentId(), depSem.getSemester());
+        if (sections == null || sections.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<UUID> studentIds = new ArrayList<>();
+        for (StudentSection ss : sections) {
+            if (ss != null && ss.getStudentId() != null) {
+                studentIds.add(ss.getStudentId());
+            }
+        }
+        return studentIds;
+    }
+
+    private UUID getAnyAssignedLecturerForCourse(UUID courseId, UUID fallbackLecturerId) {
+        if (courseId == null) {
+            return fallbackLecturerId;
+        }
+
+        try {
+            Object res = entityManager.createNativeQuery(
+                            "SELECT lecturer_id FROM lecturer_course_assignments WHERE course_id = ?1 AND is_active = true LIMIT 1"
+                    )
+                    .setParameter(1, courseId)
+                    .getSingleResult();
+
+            if (res instanceof UUID) {
+                return (UUID) res;
+            }
+            if (res != null) {
+                return UUID.fromString(res.toString());
+            }
+        } catch (Exception ignored) {
+        }
+        return fallbackLecturerId;
+    }
+
     private void seedAttendance(List<String> messages) {
         try {
-            UUID markedBy = UUID.fromString("550e8400-e29b-41d4-a716-446655440201");
+            UUID fallbackLecturerId = UUID.fromString("550e8400-e29b-41d4-a716-446655440201");
 
             List<Course> courses = courseRepository.findAll().stream()
                     .filter(c -> c.getDepartmentSemesterId() != null)
@@ -1043,21 +1476,21 @@ public class DataSeedController {
                 return;
             }
 
-            List<User> students = userRepository.findUsersByType(User.UserType.STUDENT);
-            if (students == null || students.isEmpty()) {
-                messages.add("⚠ Cannot seed attendance - No student users found");
-                return;
-            }
-
             int inserted = 0;
 
-            for (User student : students) {
-                UUID studentId = student.getId();
+            for (Course course : courses) {
+                if (course == null || course.getId() == null) {
+                    continue;
+                }
+                UUID courseId = course.getId();
+                UUID markedBy = getAnyAssignedLecturerForCourse(courseId, fallbackLecturerId);
 
-                for (int i = 0; i < Math.min(2, courses.size()); i++) {
-                    Course course = courses.get(i);
-                    UUID courseId = course.getId();
+                List<UUID> studentIds = getRosterStudentIdsForCourse(course);
+                if (studentIds.isEmpty()) {
+                    continue;
+                }
 
+                for (UUID studentId : studentIds) {
                     for (int d = 1; d <= 3; d++) {
                         LocalDate date = LocalDate.now().minusDays(d);
                         UUID attendanceId = UUID.nameUUIDFromBytes(("attendance|" + studentId + "|" + courseId + "|" + date).getBytes());
@@ -1096,26 +1529,21 @@ public class DataSeedController {
                 return;
             }
 
-            List<User> students = userRepository.findUsersByType(User.UserType.STUDENT);
-            if (students == null || students.isEmpty()) {
-                messages.add("⚠ Cannot seed grades - No student users found");
-                return;
-            }
-
             int inserted = 0;
 
-            for (User student : students) {
-                UUID studentId = student.getId();
+            for (Course course : courses) {
+                if (course == null || course.getId() == null || course.getDepartmentSemesterId() == null) {
+                    continue;
+                }
 
-                for (int i = 0; i < Math.min(2, courses.size()); i++) {
-                    Course course = courses.get(i);
-                    UUID courseId = course.getId();
-                    UUID semesterId = course.getDepartmentSemesterId();
+                UUID courseId = course.getId();
+                UUID semesterId = course.getDepartmentSemesterId();
+                List<UUID> studentIds = getRosterStudentIdsForCourse(course);
+                if (studentIds.isEmpty()) {
+                    continue;
+                }
 
-                    if (semesterId == null) {
-                        continue;
-                    }
-
+                for (UUID studentId : studentIds) {
                     UUID gradeId = UUID.nameUUIDFromBytes(("grades|" + studentId + "|" + courseId + "|" + semesterId).getBytes());
 
                     BigDecimal internalMarks = BigDecimal.valueOf(25);
@@ -1155,28 +1583,51 @@ public class DataSeedController {
 
     private void seedMarks(List<String> messages) {
         try {
-            // Check if course exists before creating marks
-            Course course = courseRepository.findById(UUID.fromString("550e8400-e29b-41d4-a716-446655440701")).orElse(null);
-            if (course == null) {
-                messages.add("⚠ Cannot seed marks - Course not found");
+            UUID fallbackLecturerId = UUID.fromString("550e8400-e29b-41d4-a716-446655440201");
+
+            List<Course> courses = courseRepository.findAll().stream()
+                    .filter(c -> c.getDepartmentSemesterId() != null)
+                    .sorted(Comparator.comparing(Course::getCourseCode, Comparator.nullsLast(String::compareToIgnoreCase)))
+                    .toList();
+            if (courses == null || courses.isEmpty()) {
+                messages.add("⚠ Cannot seed marks - Courses not found");
                 return;
             }
-            
-            if (marksRepository.count() == 0) {
-                Marks mark1 = new Marks();
-                mark1.setStudentId(UUID.fromString("550e8400-e29b-41d4-a716-446655440301"));
-                mark1.setCourseId(UUID.fromString("550e8400-e29b-41d4-a716-446655440701"));
-                mark1.setExamType(com.nethaji.Enums.ExamType.INTERNAL);
-                mark1.setMarksObtained(BigDecimal.valueOf(85.5));
-                mark1.setMaxMarks(BigDecimal.valueOf(100.0));
-                mark1.setExamDate(LocalDate.now().minusDays(10));
-                mark1.setEvaluatedBy(UUID.fromString("550e8400-e29b-41d4-a716-446655440201"));
-                marksRepository.save(mark1);
 
-                messages.add("✓ Seeded Sample Marks");
-            } else {
-                messages.add("⚠ Marks already exist");
+            int inserted = 0;
+            for (Course course : courses) {
+                if (course == null || course.getId() == null) {
+                    continue;
+                }
+                UUID courseId = course.getId();
+                UUID evaluatedBy = getAnyAssignedLecturerForCourse(courseId, fallbackLecturerId);
+
+                List<UUID> studentIds = getRosterStudentIdsForCourse(course);
+                if (studentIds.isEmpty()) {
+                    continue;
+                }
+
+                for (UUID studentId : studentIds) {
+                    UUID marksId = UUID.nameUUIDFromBytes(("marks|" + studentId + "|" + courseId + "|" + com.nethaji.Enums.ExamType.INTERNAL.name()).getBytes());
+                    inserted += entityManager.createNativeQuery(
+                                    "INSERT INTO marks (id, student_id, course_id, exam_type, marks_obtained, max_marks, exam_date, evaluated_by, remarks, created_at, updated_at) " +
+                                            "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, now(), now()) " +
+                                            "ON CONFLICT (id) DO NOTHING"
+                            )
+                            .setParameter(1, marksId)
+                            .setParameter(2, studentId)
+                            .setParameter(3, courseId)
+                            .setParameter(4, com.nethaji.Enums.ExamType.INTERNAL.name())
+                            .setParameter(5, BigDecimal.valueOf(85.5))
+                            .setParameter(6, BigDecimal.valueOf(100.0))
+                            .setParameter(7, LocalDate.now().minusDays(10))
+                            .setParameter(8, evaluatedBy)
+                            .setParameter(9, "Seeded internal marks")
+                            .executeUpdate();
+                }
             }
+
+            messages.add("✓ Seeded Marks (" + inserted + " inserted)");
         } catch (Exception e) {
             messages.add("⚠ Error seeding marks: " + e.getMessage());
         }
