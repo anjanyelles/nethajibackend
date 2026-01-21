@@ -13,18 +13,18 @@ const AdminDashboardMain = () => {
       <ChartDashboard />
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-30px">
         {/* popular instructor */}
-        <PopularInstructors />
+        {/* <PopularInstructors /> */}
         {/* Recent Course */}
-        <RecentCourses />
+        {/* <RecentCourses /> */}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-30px">
         {/* Notice Board */}
-        <NoticeBoard />
+        {/* <NoticeBoard /> */}
         {/* notifications */}
-        <Notifications />
+        {/* <Notifications /> */}
       </div>
-      <AdminFeedbacks />
+      {/* <AdminFeedbacks /> */}
     </>
   );
 };

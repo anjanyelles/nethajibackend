@@ -3,10 +3,11 @@ import dashboardImage2 from "@/assets/images/dashbord/dashbord__2.jpg";
 import teacherImage2 from "@/assets/images/teacher/teacher__2.png";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const HeroDashboard = () => {
+  const router = useRouter();
   const pathname = usePathname();
   const partOfPathNaem = pathname.split("/")[2].split("-")[0];
   const isAdmin = partOfPathNaem === "admin" ? true : false;
@@ -26,6 +27,12 @@ const HeroDashboard = () => {
     setCourseCount(Number(sessionStorage.getItem("courseCount")) || 0);
     setCertificateCount(Number(sessionStorage.getItem("certificateCount")) || 0);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    router.push("/");
+  };
   return (
     <section>
       <div className="container-fluid-2">
@@ -106,7 +113,7 @@ const HeroDashboard = () => {
           </div>
           {isAdmin || isInstructor ? (
             <div className="text-center">
-              <div className="text-yellow">
+              <div className="text-yellow flex items-center justify-center gap-2">
                 {" "}
                 <i className="icofont-star"></i>{" "}
                 <i className="icofont-star"></i>{" "}
@@ -126,6 +133,13 @@ const HeroDashboard = () => {
                 >
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                 </svg>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="ml-2 inline-flex items-center rounded bg-whiteColor/20 px-3 py-1 text-sm font-medium text-whiteColor hover:bg-whiteColor/30"
+                >
+                  Logout
+                </button>
               </div>
               {/* <p className="text-whiteColor">4.0 (120 Reviews)</p> */}
             </div>

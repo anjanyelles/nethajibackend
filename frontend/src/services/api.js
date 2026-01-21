@@ -12,8 +12,14 @@ const BASE_URL =
     ? "https://api.nethajidcs.com/api/nethaji-service/"
     : "http://localhost:9029/api/nethaji-service/");
 
+const DEFAULT_TIMEOUT_MS = Number.parseInt(
+  process.env.NEXT_PUBLIC_API_TIMEOUT_MS || "90000",
+  10
+);
+
 const api = axios.create({
   baseURL: BASE_URL,
+  timeout: Number.isFinite(DEFAULT_TIMEOUT_MS) ? DEFAULT_TIMEOUT_MS : 90000,
   headers: {
     "Content-Type": "application/json",
   },
