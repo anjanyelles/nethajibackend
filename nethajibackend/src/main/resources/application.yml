@@ -1,5 +1,5 @@
 server:
-  port: 9029
+  port: ${PORT:9029}
 
 spring:
   application:
@@ -17,9 +17,9 @@ spring:
       mode: never
       data-locations: classpath:data.sql
   datasource:
-    url: jdbc:postgresql://localhost:5432/nethaji
-    username: nethaji_user
-    password: Anjan$123
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/nethaji}
+    username: ${SPRING_DATASOURCE_USERNAME:nethaji_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
     hikari:
       minimum-idle: 5
       maximum-pool-size: 20
@@ -29,7 +29,7 @@ spring:
 
 twoFactor:
   host: https://2factor.in/API/V1/
-  apiKey: 71313b07-b010-11e7-94da-0200cd936042
+  apiKey: ${TWO_FACTOR_API_KEY:}
   verifyPath: /SMS/VERIFY
   templateName: OTPXYRICE
   esignTemplateName: eSign-OTP
@@ -39,10 +39,10 @@ bucketName: hireingdishabucket
 
 app:
   auth:
-    tokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
+    tokenSecret: ${APP_AUTH_TOKEN_SECRET:dev-secret-change-me}
     tokenExpirationMSec: 864000000
     refreshTokenExpiration: 1800000
 
 aws:
-  accesskey: AKIAY7ELTQQCBODJYKX4
-  secretkey: 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
+  accesskey: ${AWS_ACCESS_KEY_ID:}
+  secretkey: ${AWS_SECRET_ACCESS_KEY:}
