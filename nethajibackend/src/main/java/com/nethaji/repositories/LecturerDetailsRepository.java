@@ -10,4 +10,6 @@ import java.util.UUID;
 
 public interface LecturerDetailsRepository extends JpaRepository<LecturerDetails, UUID> {
 
+    LecturerDetails findByLectureId(UUID lectureId);
+
 }

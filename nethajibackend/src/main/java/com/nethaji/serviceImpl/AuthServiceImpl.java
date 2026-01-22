@@ -109,6 +109,9 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private StaffProfileRepo staffProfileRepo;
 
+    @Autowired
+    private LecturerCourseAssignmentRepository lecturerCourseAssignmentRepository;
+
     private final DateFormat expectedDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
 
@@ -570,6 +573,28 @@ public class AuthServiceImpl implements AuthService {
         res.put("message","Student status Updated");
         return ResponseEntity.ok(res);
 
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> activeOrInactiveStaffForLogin(UUID staffId, Boolean status) {
+        Map<String, Object> res = new LinkedHashMap<>();
+        User staff = staffId == null ? null : userRepository.findById(staffId).orElse(null);
+
+        if (staff == null) {
+            res.put("status", false);
+            res.put("message", "Staff not found");
+            return ResponseEntity.badRequest().body(res);
+        }
+
+        staff.setIsActive(status);
+        staff.setUpdatedAt(new Date());
+        userRepository.save(staff);
+
+        res.put("status", true);
+        res.put("message", "Staff login status updated");
+        res.put("staffId", staffId);
+        res.put("loginStatus", status);
+        return ResponseEntity.ok(res);
     }
 
 
@@ -1267,6 +1292,51 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public ResponseEntity<Map<String, Object>> deactivateStaff(UUID userId) {
+        Map<String, Object> resp = new HashMap<>();
+        if (userId == null) {
+            resp.put("status", "userId is required");
+            return ResponseEntity.badRequest().body(resp);
+        }
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            resp.put("status", "User not found");
+            return ResponseEntity.badRequest().body(resp);
+        }
+
+        user.setIsActive(false);
+        user.setUpdatedAt(new Date());
+        userRepository.save(user);
+
+        StaffProfile staffProfile = staffProfileRepo.findByUserId(userId);
+        if (staffProfile != null) {
+            staffProfile.setStatus(StaffStatus.INACTIVE);
+            staffProfile.setUpdatedAt(new Date());
+            staffProfileRepo.save(staffProfile);
+        }
+
+        LecturerDetails lecturerDetails = lectureCoursesRepository.findByLectureId(userId);
+        if (lecturerDetails != null) {
+            lecturerDetails.setStatus(false);
+            lecturerDetails.setUpdatedAt(new Date());
+            lectureCoursesRepository.save(lecturerDetails);
+        }
+
+        List<LecturerCourseAssignment> assignments = lecturerCourseAssignmentRepository.findByLecturerId(userId);
+        if (assignments != null && !assignments.isEmpty()) {
+            for (LecturerCourseAssignment a : assignments) {
+                a.setIsActive(false);
+            }
+            lecturerCourseAssignmentRepository.saveAll(assignments);
+        }
+
+        resp.put("status", "Staff deactivated successfully");
+        resp.put("userId", userId);
+        return ResponseEntity.ok(resp);
+    }
+
+    @Override
     public StaffProfile saveStaffProfile(StaffProfile dto){
 
         if (dto == null || dto.getUserId() == null) {
@@ -1420,6 +1490,9 @@ public class AuthServiceImpl implements AuthService {
                 staffProfile.setCreatedAt(d.getCreatedAt());
                 staffProfile.setUpdatedAt(d.getUpdatedAt());
 
+                User u = userRepository.findById(d.getUserId()).orElse(null);
+                staffProfile.setLoginStatus(u != null ? u.getIsActive() : null);
+
                 list.add(staffProfile);
             });
 
@@ -1554,6 +1627,7 @@ public class AuthServiceImpl implements AuthService {
                 registerRequest.setFirstName(user.getFirstName());
                 registerRequest.setLastName(user.getLastName());
                 registerRequest.setEmail(user.getEmail());
+                registerRequest.setEnrollmentNumber(user.getEnrollmentNumber());
                 registerRequest.setMobileNumber(user.getMobileNumber());
                 registerRequest.setCountryCode(user.getCountryCode());
                 registerRequest.setUserType(user.getUserType());

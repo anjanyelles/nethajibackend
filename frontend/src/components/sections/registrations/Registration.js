@@ -42,7 +42,7 @@ const Registration = () => {
                   Registration
                 </span>
                 <h3 className="text-3xl md:text-[35px] 2xl:text-size-42 leading-[45px] 2xl:leading-2xl font-bold text-whiteColor pb-25px">
-  Register Your{" "}
+  Login Your{" "}
   <span className="relative after:w-full after:h-[7px] after:bg-secondaryColor after:absolute after:left-0 after:bottom-2 md:after:bottom-4 z-0 after:z-[-1]">
     Account
   </span>{" "}
@@ -50,7 +50,7 @@ const Registration = () => {
 </h3>
 
                 <div className="flex gap-x-5 items-center">
-                  <PopupVideo />
+                  {/* <PopupVideo /> */}
 
                   <div>
                   <p className="text-size-15 md:text-[22px] lg:text-lg 2xl:text-[22px] leading-6 md:leading-9 lg:leading-8 2xl:leading-9 font-semibold text-white">
@@ -62,7 +62,7 @@ const Registration = () => {
               </div>
             </div>
             {/* sbject right  */}
-            <div className="overflow-visible lg:col-start-8 lg:col-span-5 relative z-1 lg:-mb-150px">
+            {/* <div className="overflow-visible lg:col-start-8 lg:col-span-5 relative z-1 lg:-mb-150px">
               <form
                 className="p-35px pt-10 bg-lightGrey10 dark:bg-lightGrey10-dark rounded shadow-experience"
                 data-aos="fade-up"
@@ -108,7 +108,7 @@ const Registration = () => {
                   </ButtonPrimary>
                 </div>
               </form>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

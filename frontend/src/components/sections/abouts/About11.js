@@ -53,11 +53,11 @@ const About11 = () => {
               students transition smoothly into the professional world.
             </p>
 
-            <div className="mt-30px">
+            {/* <div className="mt-30px">
               <ButtonPrimary path="/about" arrow={true}>
                 Learn More
               </ButtonPrimary>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

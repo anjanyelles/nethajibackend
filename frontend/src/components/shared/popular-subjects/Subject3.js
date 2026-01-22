@@ -5,9 +5,7 @@ const Subject3 = ({ subject }) => {
   const { title, desc } = subject;
   return (
     <Link
-      href={`/courses?category=${
-        title ? title.split(" ").join("_").toLowerCase() : "#"
-      }`}
+      href="#"
       className="pt-5 pb-15px px-30px rounded-5px bg-borderColor text-center hover:bg-secondaryColor dark:bg-borderColor-dark dark:hover:bg-secondaryColor group"
       data-aos="fade-up"
     >

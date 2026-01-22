@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +37,12 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public ResponseEntity<MarksDTO> enterMarks(MarksDTO marksDTO) {
         try {
+            if (marksDTO == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (isMarksOutOfRange(marksDTO.getMarksObtained(), marksDTO.getMaxMarks())) {
+                return ResponseEntity.badRequest().build();
+            }
             Marks marks = new Marks();
             marks.setStudentId(marksDTO.getStudentId());
             marks.setCourseId(marksDTO.getCourseId());
@@ -54,11 +61,33 @@ public class MarksServiceImpl implements MarksService {
         }
     }
 
+    private boolean isMarksOutOfRange(BigDecimal obtained, BigDecimal max) {
+        if (obtained == null || max == null) {
+            return false;
+        }
+        if (max.compareTo(BigDecimal.ZERO) <= 0) {
+            return true;
+        }
+        return obtained.compareTo(BigDecimal.ZERO) < 0 || obtained.compareTo(max) > 0;
+    }
+
     @Override
     public ResponseEntity<List<MarksDTO>> enterBulkMarks(BulkMarksDTO bulkMarksDTO) {
         try {
+            if (bulkMarksDTO == null || bulkMarksDTO.getMaxMarks() == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (bulkMarksDTO.getMaxMarks().compareTo(BigDecimal.ZERO) <= 0) {
+                return ResponseEntity.badRequest().build();
+            }
             List<Marks> marksList = new ArrayList<>();
             for (BulkMarksDTO.StudentMarksEntry entry : bulkMarksDTO.getStudents()) {
+                if (entry == null) {
+                    return ResponseEntity.badRequest().build();
+                }
+                if (isMarksOutOfRange(entry.getMarksObtained(), bulkMarksDTO.getMaxMarks())) {
+                    return ResponseEntity.badRequest().build();
+                }
                 Marks marks = new Marks();
                 marks.setStudentId(entry.getStudentId());
                 marks.setCourseId(bulkMarksDTO.getCourseId());
@@ -117,6 +146,13 @@ public class MarksServiceImpl implements MarksService {
             Marks marks = marksRepository.findById(id).orElse(null);
             if (marks == null) {
                 return ResponseEntity.notFound().build();
+            }
+
+            if (marksDTO == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (isMarksOutOfRange(marksDTO.getMarksObtained(), marksDTO.getMaxMarks())) {
+                return ResponseEntity.badRequest().build();
             }
 
             marks.setMarksObtained(marksDTO.getMarksObtained());

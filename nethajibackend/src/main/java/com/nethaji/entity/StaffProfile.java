@@ -102,6 +102,9 @@ public class StaffProfile {
     @Column(name = "employee_subject", nullable = false)
     private String employeeSubject;
 
+    @Transient
+    private Boolean loginStatus;
+
 
 
 

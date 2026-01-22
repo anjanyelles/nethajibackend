@@ -33,19 +33,21 @@ const [passwordLoading, setPasswordLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState("");
 
-  const [form, setForm] = useState({
+  const initialForm = {
     firstName: "",
     lastName: "",
     email: "",
     mobileNumber: "",
     password: "",
     branch: "",
-    graduationType: "UG",
+    graduationType: "",
     countryCode: "+91",
     userType: "STUDENT",
     programId: "",
     semester: 1,
-  });
+  };
+
+  const [form, setForm] = useState(initialForm);
 
 function validatePassword() {
   if (!newPassword || newPassword.trim().length < 6) {
@@ -61,7 +63,6 @@ function validatePassword() {
         if (Array.isArray(data) && data.length > 0) {
           setPrograms(data);
           setProgramId(data[0].id);
-          setForm((f) => ({ ...f, programId: data[0].id }));
         }
       } catch (err) {
         console.error(err);
@@ -69,6 +70,14 @@ function validatePassword() {
     }
     loadPrograms();
   }, []);
+
+  const branchOptions = Array.from(
+    new Set(
+      (programs || [])
+        .map((p) => (p?.programCode || p?.level || "").toString().trim())
+        .filter(Boolean)
+    )
+  );
 
 
   useEffect(() => {
@@ -164,7 +173,30 @@ function validatePassword() {
 
 
   function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => {
+      const next = { ...prev, [name]: value };
+
+      if (name === "branch") {
+        const filtered = programs.filter(
+          (p) => p?.programCode === value || p?.level === value
+        );
+        if (filtered.length > 0) {
+          next.programId = filtered[0].id;
+          next.graduationType = filtered[0].departmentCode || "";
+        } else {
+          next.programId = "";
+          next.graduationType = "";
+        }
+      }
+
+      if (name === "programId") {
+        const selected = programs.find((p) => p?.id === value);
+        next.graduationType = selected?.departmentCode || "";
+      }
+
+      return next;
+    });
   }
 
   function validateForm() {
@@ -182,7 +214,13 @@ function validatePassword() {
       return "Password must be at least 6 characters";
 
     if (!form.branch) return "Branch is required";
-    if (!form.programId) return "Program is required";
+    const availablePrograms = programs.filter(
+      (p) => p?.programCode === form.branch || p?.level === form.branch
+    );
+    if (form.branch && availablePrograms.length === 0) {
+      return "No courses available for selected branch";
+    }
+    if (!form.programId) return "Course is required";
 
     if (!form.semester || form.semester < 1 || form.semester > 6)
       return "Semester must be between 1 and 6";
@@ -276,7 +314,11 @@ function validatePassword() {
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-bold">Students</h1>
      <button
-  onClick={() => setShowModal(true)}
+  onClick={() => {
+    setForm(initialForm);
+    setFormError("");
+    setShowModal(true);
+  }}
   className="w-48 text-size-12 2xl:text-size-15 text-whiteColor bg-primaryColor block border-primaryColor border hover:text-primaryColor hover:bg-white px-15px py-2 rounded-standard dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor"
 >
   <FaPlus className="inline mr-2" /> Add Student
@@ -454,12 +496,14 @@ function validatePassword() {
           <input
             name="firstName"
             placeholder="First Name"
+            value={form.firstName}
             onChange={handleChange}
             className="border p-2 rounded"
           />
           <input
             name="lastName"
             placeholder="Last Name"
+            value={form.lastName}
             onChange={handleChange}
             className="border p-2 rounded"
           />
@@ -470,12 +514,14 @@ function validatePassword() {
           <input
             name="email"
             placeholder="Email"
+            value={form.email}
             onChange={handleChange}
             className="border p-2 rounded"
           />
           <input
             name="mobileNumber"
             placeholder="Mobile Number"
+            value={form.mobileNumber}
             onChange={handleChange}
             className="border p-2 rounded"
           />
@@ -486,37 +532,58 @@ function validatePassword() {
           <input
             name="password"
             placeholder="Password"
+            value={form.password}
             onChange={handleChange}
             className="border p-2 rounded"
           />
 
           <select
             name="branch"
+            value={form.branch || ""}
             onChange={handleChange}
             className="border p-2 rounded"
           >
             <option value="">Select Branch</option>
-            <option value="BCOM">BCOM</option>
-            <option value="BBA">BBA</option>
-            <option value="BSC">BSC</option>
-            <option value="MSC">MSC</option>
+            {branchOptions.map((b) => (
+              <option key={b} value={b}>
+                {b}
+              </option>
+            ))}
           </select>
         </div>
 
         {/* Row 4 */}
         <div className="grid grid-cols-2 gap-3">
-          <select
-            name="programId"
-            value={form.programId}
-            onChange={handleChange}
-            className="border p-2 rounded"
-          >
-            {programs.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          {(() => {
+            const filteredPrograms = form.branch
+              ? programs.filter(
+                  (p) => p?.programCode === form.branch || p?.level === form.branch
+                )
+              : [];
+            const disabled = !form.branch || filteredPrograms.length === 0;
+            const placeholder = !form.branch
+              ? "Select Branch first"
+              : filteredPrograms.length === 0
+              ? "No courses available"
+              : "Select Course";
+
+            return (
+              <select
+                name="programId"
+                value={form.programId || ""}
+                onChange={handleChange}
+                disabled={disabled}
+                className="border p-2 rounded"
+              >
+                <option value="">{placeholder}</option>
+                {filteredPrograms.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            );
+          })()}
 
           <input
             type="number"

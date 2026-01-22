@@ -2,7 +2,9 @@ package com.nethaji.controller;
 
 import com.nethaji.dto.AttendanceDTO;
 import com.nethaji.dto.AttendanceReportDTO;
+import com.nethaji.dto.AttendanceViewRowDTO;
 import com.nethaji.dto.BulkAttendanceDTO;
+import com.nethaji.dto.CourseAttendanceReportRowDTO;
 import com.nethaji.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +68,24 @@ public class AttendanceController {
     @GetMapping("/report/course/{courseId}")
     public ResponseEntity<List<AttendanceReportDTO>> getAttendanceReportByCourse(@PathVariable UUID courseId) {
         return attendanceService.getAttendanceReportByCourse(courseId);
+    }
+
+    @GetMapping("/view/course/{courseId}")
+    public ResponseEntity<List<AttendanceViewRowDTO>> getAttendanceViewByCourseAndDate(
+            @PathVariable UUID courseId,
+            @RequestParam LocalDate date,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String search) {
+        return attendanceService.getAttendanceViewByCourseAndDate(courseId, date, status, search);
+    }
+
+    @GetMapping("/report/course/{courseId}/date-range")
+    public ResponseEntity<List<CourseAttendanceReportRowDTO>> getCourseAttendanceReportByDateRange(
+            @PathVariable UUID courseId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate,
+            @RequestParam(required = false) Double lowAttendanceThreshold) {
+        return attendanceService.getCourseAttendanceReportByDateRange(courseId, startDate, endDate, lowAttendanceThreshold);
     }
 
     @PutMapping("/{id}")

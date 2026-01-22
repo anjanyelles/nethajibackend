@@ -40,6 +40,8 @@ public interface AuthService {
 
     public List<StaffProfile>getListOfStaffDetails();
 
+    ResponseEntity<Map<String, Object>> deactivateStaff(UUID userId);
+
 
 
     ResponseEntity<PrincipalHierarchyResponse> getLecturers();
@@ -56,6 +58,8 @@ public interface AuthService {
     ResponseEntity<Map<String, Object>> updateStudentProgram(UUID studentId, UUID newProgramId);
 
     ResponseEntity<Map<String, Object>> activeOrInactiveStudentForLogin(UUID studentId,Boolean status);
+
+    ResponseEntity<Map<String, Object>> activeOrInactiveStaffForLogin(UUID staffId, Boolean status);
 
     ResponseEntity<List<RegisterRequest>> getAllStudents();
 

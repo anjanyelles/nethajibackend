@@ -7,7 +7,9 @@ import {
   getAllLecturers, 
   getAllStaffProfiles,
   saveStaffProfile,
-  toggleStudentStatus 
+  deactivateStaff,
+  toggleStudentStatus,
+  toggleStaffStatus 
 } from "@/services";
 import { getAllDepartments } from "@/services/academicService";
 
@@ -34,6 +36,8 @@ export default function AdminStaff() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [togglingLogin, setTogglingLogin] = useState(false);
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -93,12 +97,43 @@ export default function AdminStaff() {
     }
   };
 
+  const handleToggleLogin = async (member) => {
+    if (!member?.userId) {
+      setError("Invalid staff record (missing userId)");
+      return;
+    }
+
+    const current = member.loginStatus;
+    const nextStatus = !(current === true);
+
+    setTogglingLogin(true);
+    setError("");
+    try {
+      await toggleStaffStatus(member.userId, nextStatus);
+      setStaff((prev) =>
+        prev.map((s) =>
+          s.userId === member.userId
+            ? {
+                ...s,
+                loginStatus: nextStatus,
+              }
+            : s
+        )
+      );
+    } catch (err) {
+      setError(err?.message || err?.status || "Failed to update login status");
+    } finally {
+      setTogglingLogin(false);
+    }
+  };
+
   const fetchStaff = async () => {
     setLoading(true);
     setError("");
     try {
       const data = await getAllStaffProfiles();
-      setStaff(Array.isArray(data) ? data : []);
+      const arr = Array.isArray(data) ? data : [];
+      setStaff(arr.filter((m) => (m?.status || "ACTIVE") !== "INACTIVE"));
     } catch (err) {
       setError("Failed to load staff");
       console.error(err);
@@ -259,6 +294,113 @@ export default function AdminStaff() {
     setShowAddModal(true);
   };
 
+  const openEditModal = (member) => {
+    if (!member) return;
+    setSelectedStaff(member);
+    setStaffForm({
+      firstName: member.firstName || "",
+      lastName: member.lastName || "",
+      middleName: member.middleName || "",
+      department: member.department || "",
+      designation: member.designation || "",
+      qualification: member.qualification || "",
+      joiningDate: member.joiningDate ? String(member.joiningDate).slice(0, 10) : "",
+      experienceYears: member.experienceYears != null ? String(member.experienceYears) : "",
+      phoneNumber: member.phoneNumber || "",
+      email: member.email || "",
+      employmentType: member.employmentType || "FULLTIME",
+      salary: member.salary != null ? String(member.salary) : "",
+      emergencyContactName: member.emergencyContactName || "",
+      emergencyContactPhone: member.emergencyContactPhone || "",
+      address: member.address || "",
+      dateOfBirth: member.dateOfBirth ? String(member.dateOfBirth).slice(0, 10) : "",
+      gender: member.gender || "MALE",
+      employeeSubject: member.employeeSubject || "",
+      status: member.status || "ACTIVE",
+    });
+    setError("");
+    setSuccess("");
+    setShowEditModal(true);
+  };
+
+  const handleUpdateStaff = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!selectedStaff?.userId) {
+      setError("Invalid staff record (missing userId)");
+      return;
+    }
+
+    const staffError = validateStaffForm();
+    if (staffError) {
+      setError(staffError);
+      return;
+    }
+
+    setFormLoading(true);
+    try {
+      await saveStaffProfile({
+        id: selectedStaff.id,
+        userId: selectedStaff.userId,
+        firstName: staffForm.firstName,
+        lastName: staffForm.lastName,
+        middleName: staffForm.middleName || "",
+        department: staffForm.department,
+        designation: staffForm.designation,
+        qualification: staffForm.qualification || "",
+        joiningDate: staffForm.joiningDate,
+        experienceYears: staffForm.experienceYears ? parseInt(staffForm.experienceYears) : 0,
+        phoneNumber: staffForm.phoneNumber || undefined,
+        email: staffForm.email || undefined,
+        employmentType: staffForm.employmentType,
+        salary: staffForm.salary ? parseFloat(staffForm.salary) : null,
+        emergencyContactName: staffForm.emergencyContactName || "",
+        emergencyContactPhone: staffForm.emergencyContactPhone || "",
+        address: staffForm.address || "",
+        dateOfBirth: staffForm.dateOfBirth || null,
+        gender: staffForm.gender,
+        employeeSubject: staffForm.employeeSubject,
+        status: staffForm.status,
+      });
+
+      setSuccess("Staff member updated successfully!");
+      setShowEditModal(false);
+      setSelectedStaff(null);
+      fetchStaff();
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (err) {
+      setError(err.response?.data?.status || err.message || "Failed to update staff");
+      console.error("Update staff error:", err);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleDeleteStaff = async (member) => {
+    if (!member?.userId) {
+      setError("Invalid staff record (missing userId)");
+      return;
+    }
+    const ok = window.confirm(`Deactivate staff member ${member.firstName || ""} ${member.lastName || ""}?`);
+    if (!ok) return;
+    setError("");
+    setSuccess("");
+    setFormLoading(true);
+    try {
+      await deactivateStaff(member.userId);
+      setSuccess("Staff member deactivated successfully!");
+      fetchStaff();
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (err) {
+      setError(err.response?.data?.status || err.message || "Failed to deactivate staff");
+      console.error("Deactivate staff error:", err);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     try {
@@ -313,6 +455,7 @@ export default function AdminStaff() {
                   <th className="px-6 py-3">Subject</th>
                   <th className="px-6 py-3">Joining Date</th>
                   <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Login</th>
                   <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
@@ -341,21 +484,180 @@ export default function AdminStaff() {
                         {member.status || "ACTIVE"}
                       </span>
                     </td>
+                    <td className="px-6 py-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleLogin(member)}
+                        disabled={togglingLogin}
+                        title="Toggle Login"
+                      >
+                        {member.loginStatus ? (
+                          <FaToggleOn className="text-green-600 text-2xl" />
+                        ) : (
+                          <FaToggleOff className="text-gray-400 text-2xl" />
+                        )}
+                      </button>
+                    </td>
                     <td className="px-6 py-4">
                       <button
-                        onClick={() => {
-                          setSelectedStaff(member);
-                          setShowEditModal(true);
-                        }}
-                        className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded mr-2"
+                        type="button"
+                        onClick={() => openEditModal(member)}
+                        className="px-3 py-1 text-size-12 2xl:text-size-15 text-whiteColor bg-primaryColor block border-primaryColor border hover:text-primaryColor hover:bg-white  rounded-standard dark:hover:bg-whiteColor-dark dark: dark:hover:text-whiteColor. mb-2"
+                        title="Edit"
                       >
                         <FaEdit />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteStaff(member)}
+                        className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded"
+                        title="Delete"
+                        disabled={formLoading}
+                      >
+                        <FaTrash />
                       </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Edit Staff Modal */}
+        {showEditModal && selectedStaff && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+              <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+                Edit Staff Member
+              </h2>
+
+              <form onSubmit={handleUpdateStaff}>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">
+                    Staff Profile Details
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">First Name *</label>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={staffForm.firstName}
+                        onChange={handleStaffFormChange}
+                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Last Name *</label>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={staffForm.lastName}
+                        onChange={handleStaffFormChange}
+                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Department *</label>
+                      <select
+                        name="department"
+                        value={staffForm.department}
+                        onChange={handleStaffFormChange}
+                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                        required
+                      >
+                        <option value="">Select Department</option>
+                        {departments.map((dept) => (
+                          <option key={dept.id} value={dept.departmentCode}>
+                            {dept.departmentName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Designation *</label>
+                      <input
+                        type="text"
+                        name="designation"
+                        value={staffForm.designation}
+                        onChange={handleStaffFormChange}
+                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Qualification</label>
+                      <input
+                        type="text"
+                        name="qualification"
+                        value={staffForm.qualification}
+                        onChange={handleStaffFormChange}
+                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Subject *</label>
+                      <input
+                        type="text"
+                        name="employeeSubject"
+                        value={staffForm.employeeSubject}
+                        onChange={handleStaffFormChange}
+                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Joining Date *</label>
+                      <input
+                        type="date"
+                        name="joiningDate"
+                        value={staffForm.joiningDate}
+                        onChange={handleStaffFormChange}
+                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Status</label>
+                      <select
+                        name="status"
+                        value={staffForm.status}
+                        onChange={handleStaffFormChange}
+                        className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                      >
+                        <option value="ACTIVE">ACTIVE</option>
+                        <option value="INACTIVE">INACTIVE</option>
+                        <option value="LEAVE">LEAVE</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setSelectedStaff(null);
+                      resetForms();
+                    }}
+                    className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={formLoading}
+                    className="px-4 py-2 bg-[#1f5a6c] text-white rounded hover:bg-[#174652] disabled:opacity-50"
+                  >
+                    {formLoading ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
 
@@ -543,7 +845,7 @@ export default function AdminStaff() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Experience (Years)</label>
                       <input
-                        type="number"
+                        type="tel"
                         name="experienceYears"
                         value={staffForm.experienceYears}
                         onChange={handleStaffFormChange}
@@ -566,7 +868,7 @@ export default function AdminStaff() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Salary</label>
                       <input
-                        type="number"
+                        type="tel"
                         name="salary"
                         value={staffForm.salary}
                         onChange={handleStaffFormChange}

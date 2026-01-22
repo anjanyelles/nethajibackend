@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaPlus, FaCalendar, FaUser, FaBook } from "react-icons/fa";
+import { FaPlus, FaCalendar, FaBook } from "react-icons/fa";
 import {
   markBulkAttendance,
-  getAttendanceByCourse,
-  getAttendanceReportByCourse,
-  getAttendanceByStudent,
+  getAttendanceViewByCourseAndDate,
+  getCourseAttendanceReportByDateRange,
 } from "@/services";
 import { getAllCourses } from "@/services/academicService";
-import { getAllStudentsSimple, getAllStudents } from "@/services/authService";
 
 export default function AdminAttendance() {
   const [courses, setCourses] = useState([]);
@@ -17,6 +15,8 @@ export default function AdminAttendance() {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [attendanceData, setAttendanceData] = useState({});
+  const [statusFilter, setStatusFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -30,10 +30,9 @@ export default function AdminAttendance() {
 
   useEffect(() => {
     if (selectedCourse) {
-      fetchStudentsForCourse();
-      fetchAttendanceRecords();
+      fetchAttendanceView();
     }
-  }, [selectedCourse, selectedDate]);
+  }, [selectedCourse, selectedDate, statusFilter, searchQuery]);
 
   const fetchCourses = async () => {
     try {
@@ -44,47 +43,33 @@ export default function AdminAttendance() {
     }
   };
 
-  const fetchStudentsForCourse = async () => {
-    if (!selectedCourse) return;
-    
-    setLoading(true);
-    try {
-      // Get all students - you may need to filter by course enrollment
-      const data = await getAllStudents(0, 100);
-      if (data?.content) {
-        setStudents(data.content);
-      } else if (Array.isArray(data)) {
-        setStudents(data);
-      } else {
-        setStudents([]);
-      }
-    } catch (err) {
-      console.error("Error fetching students:", err);
-      setStudents([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchAttendanceRecords = async () => {
+  const fetchAttendanceView = async () => {
     if (!selectedCourse || !selectedDate) return;
 
+    setLoading(true);
+    setError("");
     try {
-      const data = await getAttendanceByCourse(selectedCourse);
-      // Filter by date
-      const todayRecords = Array.isArray(data) 
-        ? data.filter(record => record.attendanceDate === selectedDate)
-        : [];
-      setAttendanceRecords(todayRecords);
-      
-      // Pre-fill attendance data
+      const rows = await getAttendanceViewByCourseAndDate(
+        selectedCourse,
+        selectedDate,
+        statusFilter || undefined,
+        searchQuery || undefined
+      );
+      const arr = Array.isArray(rows) ? rows : [];
+      setStudents(arr);
+
       const prefill = {};
-      todayRecords.forEach(record => {
-        prefill[record.studentId] = record.status;
+      arr.forEach((r) => {
+        if (r?.studentId) {
+          prefill[r.studentId] = r.status || "NOT_MARKED";
+        }
       });
       setAttendanceData(prefill);
     } catch (err) {
-      console.error("Error fetching attendance:", err);
+      console.error("Error fetching attendance view:", err);
+      setStudents([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -127,11 +112,22 @@ export default function AdminAttendance() {
         return;
       }
 
-      const studentsList = students.map((student) => ({
-        studentId: student.id || student.student?.id,
-        status: attendanceData[student.id || student.student?.id] || "ABSENT",
-        remarks: "",
-      }));
+      const studentsList = students
+        .map((row) => {
+          const studentId = row.studentId || row.id || row.student?.id;
+          const status = attendanceData[studentId] ?? row.status ?? "NOT_MARKED";
+          return {
+            studentId,
+            status,
+            remarks: "",
+          };
+        })
+        .filter((s) => s.studentId && s.status && s.status !== "NOT_MARKED");
+
+      if (studentsList.length === 0) {
+        setError("Please mark attendance for at least one student");
+        return;
+      }
 
       await markBulkAttendance({
         courseId: selectedCourse,
@@ -141,7 +137,7 @@ export default function AdminAttendance() {
       });
 
       setSuccess("Attendance marked successfully!");
-      fetchAttendanceRecords();
+      fetchAttendanceView();
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to mark attendance");
@@ -158,7 +154,16 @@ export default function AdminAttendance() {
     }
 
     try {
-      const report = await getAttendanceReportByCourse(selectedCourse);
+      const defaultEnd = selectedDate;
+      const defaultStart = selectedDate;
+
+      const startDate = window.prompt("Enter report start date (YYYY-MM-DD)", defaultStart);
+      if (!startDate) return;
+
+      const endDate = window.prompt("Enter report end date (YYYY-MM-DD)", defaultEnd);
+      if (!endDate) return;
+
+      const report = await getCourseAttendanceReportByDateRange(selectedCourse, startDate, endDate, 75);
       setAttendanceRecords(Array.isArray(report) ? report : []);
       setShowReport(true);
     } catch (err) {
@@ -245,6 +250,29 @@ export default function AdminAttendance() {
                 required
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Search Student</label>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                placeholder="Search by name or enrollment"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Status Filter</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+              >
+                <option value="">All</option>
+                <option value="PRESENT">Present</option>
+                <option value="ABSENT">Absent</option>
+                <option value="NOT_MARKED">Not Marked</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -279,15 +307,17 @@ export default function AdminAttendance() {
                       </tr>
                     </thead>
                     <tbody>
-                      {students.map((student, idx) => {
-                        const studentId = student.id || student.student?.id;
-                        const studentName = student.firstName 
-                          ? `${student.firstName} ${student.lastName || ""}`.trim()
-                          : student.student 
-                          ? `${student.student.firstName} ${student.student.lastName || ""}`.trim()
-                          : "Unknown";
-                        const enrollment = student.enrollmentNumber || student.student?.enrollmentNumber || "N/A";
-                        const currentStatus = attendanceData[studentId] || "ABSENT";
+                      {students.map((row, idx) => {
+                        const studentId = row.studentId || row.id || row.student?.id;
+                        const studentName =
+                          row.studentName ||
+                          (row.firstName
+                            ? `${row.firstName} ${row.lastName || ""}`.trim()
+                            : row.student
+                            ? `${row.student.firstName} ${row.student.lastName || ""}`.trim()
+                            : "Unknown");
+                        const enrollment = row.enrollmentNumber || row.student?.enrollmentNumber || "N/A";
+                        const currentStatus = attendanceData[studentId] ?? row.status ?? "NOT_MARKED";
 
                         return (
                           <tr
@@ -295,7 +325,12 @@ export default function AdminAttendance() {
                             className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
                           >
                             <td className="px-6 py-4 font-medium">{studentName}</td>
-                            <td className="px-6 py-4">{enrollment}</td>
+                            <td className="px-6 py-4">
+                              {enrollment}
+                              {currentStatus === "NOT_MARKED" ? (
+                                <div className="text-xs text-gray-500">Not Marked</div>
+                              ) : null}
+                            </td>
                             <td className="px-6 py-4 text-center">
                               <input
                                 type="radio"
@@ -376,23 +411,27 @@ export default function AdminAttendance() {
                 <table className="w-full text-sm">
                   <thead className="bg-gray-200 dark:bg-gray-700">
                     <tr>
-                      <th className="px-4 py-2">Date</th>
                       <th className="px-4 py-2">Student</th>
-                      <th className="px-4 py-2">Status</th>
-                      <th className="px-4 py-2">Remarks</th>
+                      <th className="px-4 py-2">Enrollment</th>
+                      <th className="px-4 py-2">Total</th>
+                      <th className="px-4 py-2">Present</th>
+                      <th className="px-4 py-2">Absent</th>
+                      <th className="px-4 py-2">Not Marked</th>
+                      <th className="px-4 py-2">%</th>
+                      <th className="px-4 py-2">Low</th>
                     </tr>
                   </thead>
                   <tbody>
                     {attendanceRecords.map((record, idx) => (
                       <tr key={idx} className="border-b dark:border-gray-700">
-                        <td className="px-4 py-2">{record.attendanceDate || "N/A"}</td>
                         <td className="px-4 py-2">{record.studentName || "N/A"}</td>
-                        <td className="px-4 py-2">
-                          <span className={`px-2 py-1 rounded text-xs ${getStatusColor(record.status)}`}>
-                            {record.status || "N/A"}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2">{record.remarks || "-"}</td>
+                        <td className="px-4 py-2">{record.enrollmentNumber || "N/A"}</td>
+                        <td className="px-4 py-2">{record.totalClasses ?? 0}</td>
+                        <td className="px-4 py-2">{record.presentCount ?? 0}</td>
+                        <td className="px-4 py-2">{record.absentCount ?? 0}</td>
+                        <td className="px-4 py-2">{record.notMarkedCount ?? 0}</td>
+                        <td className="px-4 py-2">{typeof record.attendancePercentage === "number" ? record.attendancePercentage.toFixed(2) : "0.00"}</td>
+                        <td className="px-4 py-2">{record.lowAttendance ? "Yes" : "No"}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -20,6 +20,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, UUID> {
 
     List<Attendance> findByStudentIdAndCourseId(UUID studentId, UUID courseId);
 
+    Attendance findByStudentIdAndCourseIdAndAttendanceDate(UUID studentId, UUID courseId, LocalDate attendanceDate);
+
     @Query("SELECT a FROM Attendance a WHERE a.studentId = :studentId AND a.courseId = :courseId AND a.attendanceDate BETWEEN :startDate AND :endDate")
     List<Attendance> findByStudentIdAndCourseIdAndDateRange(
             @Param("studentId") UUID studentId,
@@ -30,6 +32,20 @@ public interface AttendanceRepository extends JpaRepository<Attendance, UUID> {
 
     @Query("SELECT a FROM Attendance a WHERE a.courseId = :courseId AND a.attendanceDate = :date")
     List<Attendance> findByCourseIdAndDate(@Param("courseId") UUID courseId, @Param("date") LocalDate date);
+
+    @Query("SELECT a FROM Attendance a WHERE a.courseId = :courseId AND a.attendanceDate BETWEEN :startDate AND :endDate")
+    List<Attendance> findByCourseIdAndDateRange(
+            @Param("courseId") UUID courseId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("SELECT DISTINCT a.attendanceDate FROM Attendance a WHERE a.courseId = :courseId AND a.attendanceDate BETWEEN :startDate AND :endDate")
+    List<LocalDate> findDistinctDatesByCourseIdAndDateRange(
+            @Param("courseId") UUID courseId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 
     @Query("SELECT COUNT(a) FROM Attendance a WHERE a.studentId = :studentId AND a.courseId = :courseId AND a.status = :status")
     Long countByStudentIdAndCourseIdAndStatus(

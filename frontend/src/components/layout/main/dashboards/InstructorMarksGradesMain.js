@@ -104,7 +104,49 @@ const InstructorMarksGradesMain = () => {
     return code ? `${name} (${code})` : name;
   };
 
+  useEffect(() => {
+    const max = Number(maxMarks);
+    if (!Number.isFinite(max) || max <= 0) return;
+
+    setMarksByStudent((prev) => {
+      const next = { ...prev };
+      Object.keys(next).forEach((studentId) => {
+        const raw = next[studentId];
+        if (raw === "" || raw === null || raw === undefined) return;
+        const num = Number(raw);
+        if (!Number.isFinite(num)) return;
+        if (num > max) next[studentId] = String(max);
+        if (num < 0) next[studentId] = "0";
+      });
+      return next;
+    });
+  }, [maxMarks]);
+
   const handleMarkChange = (studentId, value) => {
+    if (value === "") {
+      setMarksByStudent((prev) => ({ ...prev, [studentId]: "" }));
+      return;
+    }
+
+    if (!/^\d*\.?\d*$/.test(value)) {
+      return;
+    }
+
+    const max = Number(maxMarks);
+    if (Number.isFinite(max) && max > 0) {
+      const num = Number(value);
+      if (Number.isFinite(num)) {
+        if (num > max) {
+          setMarksByStudent((prev) => ({ ...prev, [studentId]: String(max) }));
+          return;
+        }
+        if (num < 0) {
+          setMarksByStudent((prev) => ({ ...prev, [studentId]: "0" }));
+          return;
+        }
+      }
+    }
+
     setMarksByStudent((prev) => ({ ...prev, [studentId]: value }));
   };
 
@@ -139,6 +181,12 @@ const InstructorMarksGradesMain = () => {
         };
       })
       .filter((x) => x.marksObtained !== null && Number.isFinite(x.marksObtained));
+
+    const invalid = students.find((s) => s.marksObtained < 0 || s.marksObtained > max);
+    if (invalid) {
+      setError(`Marks must be between 0 and ${max}`);
+      return;
+    }
 
     if (students.length === 0) {
       setError("Enter marks for at least one student");
@@ -299,11 +347,14 @@ const InstructorMarksGradesMain = () => {
                         <td className="py-3 px-4">{enrollment}</td>
                         <td className="py-3 px-4">
                           <input
+                            type="number"
                             value={marksByStudent[studentId] ?? ""}
                             onChange={(e) => handleMarkChange(studentId, e.target.value)}
                             className="border border-borderColor dark:border-borderColor-dark rounded px-3 py-2 bg-transparent text-sm w-[140px]"
                             inputMode="decimal"
                             placeholder="e.g. 78"
+                            min={0}
+                            max={Number.isFinite(Number(maxMarks)) ? Number(maxMarks) : undefined}
                           />
                         </td>
                       </tr>

@@ -264,8 +264,30 @@ public class AcademicServiceImpl implements AcademicService {
         response.setSemesterTotalLabs(saved.getSemesterTotalLabs());
         response.setSemesterSubjects(saved.getSemesterSubjects());
         response.setDepartmentId(saved.getDepartmentId());
+
+        List<Course> courses = courseRepository.findByDepartmentSemesterId(saved.getId());
+        courses = courses.stream()
+                .filter(c -> c.getDescription() != null && c.getDescription().startsWith("Syllabus:"))
+                .toList();
+        List<CourseListInfo> courseListInfo = courses.stream().map(c -> {
+            CourseListInfo info = new CourseListInfo();
+            info.setId(c.getId());
+            info.setName(c.getName());
+            info.setCourseCode(c.getCourseCode());
+            info.setDescription(c.getDescription());
+            info.setCourseType(c.getCourseType());
+            info.setCredits(c.getCredits());
+            info.setIsElective(c.getIsElective());
+            info.setIsActive(c.getIsActive());
+            info.setSyllabusPdfUrl(c.getSyllabusPdfUrl());
+            info.setCreatedAt(c.getCreatedAt());
+            info.setUpdatedAt(c.getUpdatedAt());
+            return info;
+        }).toList();
+        response.setCourseListInfo(courseListInfo);
+
         response.setStatus(true);
-        response.setMessage(dto.getId() != null?"updated successfully":"created successfully");
+        response.setMessage(dto.getId() != null ? "updated successfully" : "created successfully");
 
         return ResponseEntity.ok(response);
     }
@@ -629,6 +651,9 @@ DepartMentSemesters depSem=departMentSemestersRepo.findById(dto.getDepartmentSem
                     semDTO.setDepartmentId(sem.getDepartmentId());
 
                     List<Course> courses = courseRepository.findByDepartmentSemesterId(sem.getId());
+                    courses = courses.stream()
+                            .filter(c -> c.getDescription() != null && c.getDescription().startsWith("Syllabus:"))
+                            .toList();
 
                     List<CourseListInfo> courseDTOs = courses.stream().map(course -> {
                         CourseListInfo c = new CourseListInfo();

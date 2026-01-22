@@ -210,14 +210,14 @@ const DropdownDashboard = () => {
     {
       name: "COURSES",
       status: null,
-      path: "/course-grid",
+      path: "/syllabus",
       type: "secondary",
     
     },
     {
       name: "SYLLABUS",
       status: null,
-      path: "/syllabus",
+      path: "/course-grid",
       type: "secondary",
     
     },

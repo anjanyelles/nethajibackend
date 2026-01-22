@@ -50,7 +50,13 @@ const handleSubmit = async () => {
     }
   } catch (error) {
     console.error("Login error:", error);
-    setError(error.response?.data?.message || error.message || "Network error. Please check your connection and try again.");
+    const msg =
+      error?.status ||
+      error?.response?.data?.status ||
+      error?.response?.data?.message ||
+      error?.message ||
+      "Network error. Please check your connection and try again.";
+    setError(msg);
   } finally {
     setLoading(false);
   }
@@ -69,7 +75,7 @@ const handleSubmit = async () => {
         <h3 className="text-size-32 font-bold text-blackColor dark:text-blackColor-dark mb-2 leading-normal">
           Login
         </h3>
-        <p className="text-contentColor dark:text-contentColor-dark mb-15px">
+        {/* <p className="text-contentColor dark:text-contentColor-dark mb-15px">
           Don't have an account yet?
           <a
             href="login.html"
@@ -77,7 +83,7 @@ const handleSubmit = async () => {
           >
             Sign up for free
           </a>
-        </p>
+        </p> */}
       </div>
 
       <div className="pt-25px">
@@ -150,13 +156,14 @@ const handleSubmit = async () => {
         </div>
 
         {/* other login */}
-        <div>
+        {/* <p></p> */}
+        {/* <div>
           <p className="text-contentColor dark:text-contentColor-dark text-center relative mb-15px before:w-2/5 before:h-1px before:bg-borderColor4 dark:before:bg-borderColor2-dark before:absolute before:left-0 before:top-4 after:w-2/5 after:h-1px after:bg-borderColor4 dark:after:bg-borderColor2-dark after:absolute after:right-0 after:top-4">
             or Log-in with
           </p>
-        </div>
+        </div> */}
 
-        <div className="text-center flex gap-x-1 md:gap-x-15px lg:gap-x-25px gap-y-5 items-center justify-center flex-wrap">
+        {/* <div className="text-center flex gap-x-1 md:gap-x-15px lg:gap-x-25px gap-y-5 items-center justify-center flex-wrap">
           <button
             className="text-size-15 text-whiteColor bg-primaryColor px-11 py-10px border border-primaryColor hover:text-primaryColor hover:bg-whiteColor inline-block rounded group dark:hover:text-whiteColor dark:hover:bg-whiteColor-dark"
           >
@@ -167,7 +174,7 @@ const handleSubmit = async () => {
           >
             <i className="icofont-google-plus"></i> Google
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -1323,6 +1323,57 @@ public class DataSeedController {
 
         messages.add("✓ Upserted Additional Courses (" + upserted + " total applied)");
 
+        // Fixed Syllabus: B.Sc (Data Science)
+        upserted += upsertCourseByCode("BSCDS_S1_01", "Telugu", "Syllabus: Telugu", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem1Id);
+        upserted += upsertCourseByCode("BSCDS_S1_02", "English", "Syllabus: English", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem1Id);
+        upserted += upsertCourseByCode("BSCDS_S1_03", "Differential & Integral Calculus", "Syllabus: Differential & Integral Calculus", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem1Id);
+        upserted += upsertCourseByCode("BSCDS_S1_04", "Discrete Statistics & Probability", "Syllabus: Discrete Statistics & Probability", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem1Id);
+        upserted += upsertCourseByCode("BSCDS_S1_05", "Fundamentals of IT", "Syllabus: Fundamentals of IT", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem1Id);
+        upserted += upsertCourseByCode("BSCDS_S1_06", "Environmental Studies", "Syllabus: Environmental Studies", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem1Id);
+        upserted += upsertCourseByCode("BSCDS_S1_07", "Practical: FIT", "Syllabus: Practical: FIT", com.nethaji.Enums.CourseType.LAB, 2, bscDsSem1Id);
+
+        upserted += upsertCourseByCode("BSCDS_S2_01", "Telugu", "Syllabus: Telugu", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem2Id);
+        upserted += upsertCourseByCode("BSCDS_S2_02", "English", "Syllabus: English", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem2Id);
+        upserted += upsertCourseByCode("BSCDS_S2_03", "Differential Equations", "Syllabus: Differential Equations", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem2Id);
+        upserted += upsertCourseByCode("BSCDS_S2_04", "Probability Distributions", "Syllabus: Probability Distributions", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem2Id);
+        upserted += upsertCourseByCode("BSCDS_S2_05", "Problem Solving & Python Programming", "Syllabus: Problem Solving & Python Programming", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem2Id);
+        upserted += upsertCourseByCode("BSCDS_S2_06", "Basic Computer Skills", "Syllabus: Basic Computer Skills", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem2Id);
+        upserted += upsertCourseByCode("BSCDS_S2_07", "Practical: Python", "Syllabus: Practical: Python", com.nethaji.Enums.CourseType.LAB, 2, bscDsSem2Id);
+
+        upserted += upsertCourseByCode("BSCDS_S3_01", "Telugu", "Syllabus: Telugu", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem3Id);
+        upserted += upsertCourseByCode("BSCDS_S3_02", "English – III", "Syllabus: English – III", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem3Id);
+        upserted += upsertCourseByCode("BSCDS_S3_03", "Real Analysis", "Syllabus: Real Analysis", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem3Id);
+        upserted += upsertCourseByCode("BSCDS_S3_04", "Statistical Methods & Theory of Estimates", "Syllabus: Statistical Methods & Theory of Estimates", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem3Id);
+        upserted += upsertCourseByCode("BSCDS_S3_05", "Data Engineering with Python", "Syllabus: Data Engineering with Python", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem3Id);
+        upserted += upsertCourseByCode("BSCDS_S3_06", "Communication Skills", "Syllabus: Communication Skills", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem3Id);
+        upserted += upsertCourseByCode("BSCDS_S3_07", "Python – I", "Syllabus: Python – I", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem3Id);
+        upserted += upsertCourseByCode("BSCDS_S3_08", "Practical: Data Engineering", "Syllabus: Practical: Data Engineering", com.nethaji.Enums.CourseType.LAB, 2, bscDsSem3Id);
+
+        upserted += upsertCourseByCode("BSCDS_S4_01", "Telugu", "Syllabus: Telugu", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem4Id);
+        upserted += upsertCourseByCode("BSCDS_S4_02", "English – IV", "Syllabus: English – IV", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem4Id);
+        upserted += upsertCourseByCode("BSCDS_S4_03", "Algebra", "Syllabus: Algebra", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem4Id);
+        upserted += upsertCourseByCode("BSCDS_S4_04", "Statistical Inference", "Syllabus: Statistical Inference", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem4Id);
+        upserted += upsertCourseByCode("BSCDS_S4_05", "Machine Learning", "Syllabus: Machine Learning", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem4Id);
+        upserted += upsertCourseByCode("BSCDS_S4_06", "Leadership Skills", "Syllabus: Leadership Skills", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem4Id);
+        upserted += upsertCourseByCode("BSCDS_S4_07", "Python – II", "Syllabus: Python – II", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem4Id);
+        upserted += upsertCourseByCode("BSCDS_S4_08", "Practical: Machine Learning", "Syllabus: Practical: Machine Learning", com.nethaji.Enums.CourseType.LAB, 2, bscDsSem4Id);
+
+        upserted += upsertCourseByCode("BSCDS_S5_01", "Telugu", "Syllabus: Telugu", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem5Id);
+        upserted += upsertCourseByCode("BSCDS_S5_02", "English", "Syllabus: English", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem5Id);
+        upserted += upsertCourseByCode("BSCDS_S5_03", "Linear Algebra", "Syllabus: Linear Algebra", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem5Id);
+        upserted += upsertCourseByCode("BSCDS_S5_04", "Mathematics for Economics", "Syllabus: Mathematics for Economics", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem5Id);
+        upserted += upsertCourseByCode("BSCDS_S5_05", "Applied Statistics – I", "Syllabus: Applied Statistics – I", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem5Id);
+        upserted += upsertCourseByCode("BSCDS_S5_06", "NoSQL Database", "Syllabus: NoSQL Database", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem5Id);
+        upserted += upsertCourseByCode("BSCDS_S5_07", "Practical: NoSQL", "Syllabus: Practical: NoSQL", com.nethaji.Enums.CourseType.LAB, 2, bscDsSem5Id);
+
+        upserted += upsertCourseByCode("BSCDS_S6_01", "Telugu", "Syllabus: Telugu", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem6Id);
+        upserted += upsertCourseByCode("BSCDS_S6_02", "English", "Syllabus: English", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem6Id);
+        upserted += upsertCourseByCode("BSCDS_S6_03", "Information Security & Cyber Law", "Syllabus: Information Security & Cyber Law", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem6Id);
+        upserted += upsertCourseByCode("BSCDS_S6_04", "Numerical Analysis", "Syllabus: Numerical Analysis", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem6Id);
+        upserted += upsertCourseByCode("BSCDS_S6_05", "Applied Statistics – II", "Syllabus: Applied Statistics – II", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem6Id);
+        upserted += upsertCourseByCode("BSCDS_S6_06", "Big Data", "Syllabus: Big Data", com.nethaji.Enums.CourseType.THEORY, 4, bscDsSem6Id);
+        upserted += upsertCourseByCode("BSCDS_S6_07", "Practical: Big Data", "Syllabus: Practical: Big Data", com.nethaji.Enums.CourseType.LAB, 2, bscDsSem6Id);
+
         upserted += upsertCourseByCode("BCOMCA_S1_01", "Telugu", "Syllabus: Telugu", com.nethaji.Enums.CourseType.THEORY, 4, bcomCaSem1Id);
         upserted += upsertCourseByCode("BCOMCA_S1_02", "English", "Syllabus: English", com.nethaji.Enums.CourseType.THEORY, 4, bcomCaSem1Id);
         upserted += upsertCourseByCode("BCOMCA_S1_03", "Business Organization and Management", "Syllabus: Business Organization and Management", com.nethaji.Enums.CourseType.THEORY, 4, bcomCaSem1Id);

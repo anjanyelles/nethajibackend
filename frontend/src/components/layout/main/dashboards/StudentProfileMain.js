@@ -60,7 +60,7 @@ const StudentProfileMain = () => {
     <>
       <ProfileDetails profile={profile} loading={loading} />
 
-      <div className="p-10px md:px-10 md:py-50px mb-30px bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5">
+      {/* <div className="p-10px md:px-10 md:py-50px mb-30px bg-whiteColor dark:bg-whiteColor-dark shadow-accordion dark:shadow-accordion-dark rounded-5">
         <div className="mb-6 pb-5 border-b-2 border-borderColor dark:border-borderColor-dark">
           <h2 className="text-2xl font-bold text-blackColor dark:text-blackColor-dark">Edit Address</h2>
         </div>
@@ -120,7 +120,7 @@ const StudentProfileMain = () => {
           profilePhotoUrl={profile?.profilePictureUrl}
           onPhotoUploaded={(url) => setProfile((p) => ({ ...(p || {}), profilePictureUrl: url }))}
         />
-      </div>
+      </div> */}
     </>
   );
 };

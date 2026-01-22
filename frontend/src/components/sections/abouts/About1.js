@@ -118,13 +118,13 @@ const About1 = ({ children, image, hideCounter }) => {
               </li>
 
               <li>
-                <a
+                {/* <a
                   className="text-size-12 2xl:text-size-15 text-whiteColor bg-primaryColor block border-primaryColor border hover:text-primaryColor hover:bg-white px-15px py-2 rounded-standard dark:hover:bg-whiteColor-dark"
                   href="/courses"
                   style={{ width: "7rem" }}
                 >
                   Apply Now
-                </a>
+                </a> */}
               </li>
             </ul>
           </div>

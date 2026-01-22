@@ -32,11 +32,11 @@ const FooterNavList = () => {
       items: [
         {
           name: "COURSES",
-          path: "/course-grid",
+          path: "/syllabus",
         },
         {
           name: "SYLLABUS",
-          path: "/syllabus",
+          path: "/course-grid",
         },
         {
           name: "Placements",

@@ -10,6 +10,8 @@ import java.util.UUID;
 public interface LecturerCourseAssignmentRepository extends JpaRepository<LecturerCourseAssignment, UUID> {
     List<LecturerCourseAssignment> findByLecturerIdAndIsActiveTrue(UUID lecturerId);
 
+    List<LecturerCourseAssignment> findByLecturerId(UUID lecturerId);
+
     Optional<LecturerCourseAssignment> findByLecturerIdAndCourseId(UUID lecturerId, UUID courseId);
 
     boolean existsByLecturerIdAndCourseIdAndIsActiveTrue(UUID lecturerId, UUID courseId);

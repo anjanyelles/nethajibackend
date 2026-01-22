@@ -258,6 +258,20 @@ export const getAllStaffProfiles = async () => {
 };
 
 /**
+ * Activate/Deactivate Staff Login
+ */
+export const toggleStaffStatus = async (staffId, status) => {
+  try {
+    const response = await api.patch("auth/active-inactive-staff", null, {
+      params: { staffId, status },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+/**
  * Save/Update Staff Profile
  */
 export const saveStaffProfile = async (staffProfileData) => {
@@ -281,3 +295,14 @@ export const getStaffProfileById = async (staffId) => {
   }
 };
 
+/**
+ * Deactivate Staff
+ */
+export const deactivateStaff = async (userId) => {
+  try {
+    const response = await api.patch(`auth/staff/${userId}/deactivate`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};

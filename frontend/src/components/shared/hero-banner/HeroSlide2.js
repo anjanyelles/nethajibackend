@@ -24,12 +24,12 @@ const HeroSlide2 = ({ slide, idx }) => {
               </h1>
 
               <div>
-                <a
+                {/* <a
                   href="#"
                   className="text-whiteColor bg-primaryColor border border-primaryColor px-10 py-15px hover:text-primaryColor hover:bg-whiteColor rounded-full inline-block dark:hover:bg-whiteColor-dark dark:hover:text-whiteColor"
                 >
                   More about university
-                </a>
+                </a> */}
               </div>
               <div className="mt-20 md:mt-50px">
                 <p className="text-whiteColor mb-15px">Followed by :</p>

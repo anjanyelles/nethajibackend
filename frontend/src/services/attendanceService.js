@@ -112,6 +112,33 @@ export const getAttendanceReportByCourse = async (courseId) => {
   }
 };
 
+export const getAttendanceViewByCourseAndDate = async (courseId, date, status, search) => {
+  try {
+    const response = await api.get(`attendance/view/course/${courseId}`, {
+      params: { date, status, search },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const getCourseAttendanceReportByDateRange = async (
+  courseId,
+  startDate,
+  endDate,
+  lowAttendanceThreshold
+) => {
+  try {
+    const response = await api.get(`attendance/report/course/${courseId}/date-range`, {
+      params: { startDate, endDate, lowAttendanceThreshold },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
 /**
  * Update Attendance
  */

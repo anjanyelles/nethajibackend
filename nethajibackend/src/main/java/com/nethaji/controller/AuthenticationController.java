@@ -128,6 +128,14 @@ public class AuthenticationController {
 
     }
 
+    @PatchMapping("/active-inactive-staff")
+    public ResponseEntity<Map<String ,Object>> activeOrInactiveStaffForLogin(@RequestParam UUID staffId, @RequestParam Boolean status){
+
+
+        return  authService.activeOrInactiveStaffForLogin(staffId, status);
+
+    }
+
 
     @GetMapping("/all-lectures")
     public ResponseEntity<List<LectureResponseDTO>> getAllLectures(@RequestParam(required = false) UUID lectureId){
@@ -159,6 +167,11 @@ public class AuthenticationController {
     public List<StaffProfile> getStaffProfilesList() {
 
         return authService.getListOfStaffDetails();
+    }
+
+    @PatchMapping("/staff/{userId}/deactivate")
+    public ResponseEntity<Map<String, Object>> deactivateStaff(@PathVariable UUID userId) {
+        return authService.deactivateStaff(userId);
     }
 
 
