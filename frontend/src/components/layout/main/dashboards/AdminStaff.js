@@ -11,6 +11,24 @@ import {
 } from "@/services";
 import { getAllDepartments } from "@/services/academicService";
 
+ const SUBJECT_TYPE_OPTIONS = [
+  { value: "GENERAL", label: "General" },
+  { value: "COMPUTER_SCIENCE", label: "Computer Science" },
+  { value: "DATA_SCIENCE", label: "Data Science" },
+  { value: "COMMERCE", label: "Commerce" },
+  { value: "MANAGEMENT", label: "Management" },
+  { value: "ENGLISH", label: "English" },
+  { value: "TELUGU", label: "Telugu" },
+  { value: "ECONOMICS", label: "Economics" },
+  { value: "STATISTICS", label: "Statistics" },
+  { value: "MATHS", label: "Mathematics" },
+  { value: "PHYSICS", label: "Physics" },
+  { value: "CHEMISTRY", label: "Chemistry" },
+  { value: "BOTANY", label: "Botany" },
+  { value: "ZOOLOGY", label: "Zoology" },
+  { value: "FOOD_SCIENCE", label: "Food Science" },
+ ];
+
 export default function AdminStaff() {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -32,8 +50,8 @@ export default function AdminStaff() {
     password: "",
     countryCode: "+91",
     userType: "LECTURER",
-    subjectType: "MATHS",
-    graduationType: "CSE",
+    subjectType: "GENERAL",
+    graduationType: "",
   });
 
   // Staff profile form
@@ -149,7 +167,7 @@ export default function AdminStaff() {
         countryCode: userForm.countryCode,
         userType: userForm.userType,
         subjectType: userForm.subjectType,
-        graduationType: userForm.graduationType,
+        graduationType: staffForm.department || userForm.graduationType,
       });
 
       if (userResponse.status !== "Login Successful" && !userResponse.userId) {
@@ -208,8 +226,8 @@ export default function AdminStaff() {
       password: "",
       countryCode: "+91",
       userType: "LECTURER",
-      subjectType: "MATHS",
-      graduationType: "CSE",
+      subjectType: "GENERAL",
+      graduationType: "",
     });
     setStaffForm({
       firstName: "",
@@ -421,9 +439,11 @@ export default function AdminStaff() {
                         className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
                         required
                       >
-                        <option value="MATHS">Mathematics</option>
-                        <option value="PHYSICS">Physics</option>
-                        <option value="CHEMISTRY">Chemistry</option>
+                        {SUBJECT_TYPE_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>

@@ -1,6 +1,20 @@
 package com.nethaji.Enums;
 
 public enum SubjectType {
-    PHYSICS,CHEMISTRY ,MATHS
+    GENERAL,
+    MATHS,
+    PHYSICS,
+    CHEMISTRY,
+    COMPUTER_SCIENCE,
+    DATA_SCIENCE,
+    COMMERCE,
+    MANAGEMENT,
+    ENGLISH,
+    TELUGU,
+    ECONOMICS,
+    STATISTICS,
+    BOTANY,
+    ZOOLOGY,
+    FOOD_SCIENCE
 
 }
