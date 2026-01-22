@@ -25,7 +25,7 @@ const LoginTab = () => {
         <div className="tab md:w-2/3 mx-auto">
           {/* tab controller */}
 
-          <div className="tab-links grid grid-cols-2 gap-11px text-blackColor text-lg lg:text-size-22 font-semibold font-hind mb-43px mt-30px md:mt-0">
+          {/* <div className="tab-links grid grid-cols-2 gap-11px text-blackColor text-lg lg:text-size-22 font-semibold font-hind mb-43px mt-30px md:mt-0">
             {tabButtons?.map(({ name }, idx) => (
               <TabButtonPrimary
                 key={idx}
@@ -36,7 +36,7 @@ const LoginTab = () => {
                 name={name}
               />
             ))}
-          </div>
+          </div> */}
 
           {/* tab contents */}
           <div className="shadow-container bg-whiteColor dark:bg-whiteColor-dark pt-10px px-5 pb-10 md:p-50px md:pt-30px rounded-5px">
