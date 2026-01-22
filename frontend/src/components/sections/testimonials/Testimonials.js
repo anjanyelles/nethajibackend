@@ -8,9 +8,9 @@ const Testimonials = () => {
       <div className="container">
         {/* courses Heading */}
         <div className="mb-5 md:mb-10" data-aos="fade-up">
-          <div className="text-center">
+          {/* <div className="text-center">
             <SectionName>Course List</SectionName>
-          </div>
+          </div> */}
 
           <HeadingPrimary text="center">
             Client{" "}

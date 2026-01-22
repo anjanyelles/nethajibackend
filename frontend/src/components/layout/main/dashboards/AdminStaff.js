@@ -9,7 +9,8 @@ import {
   saveStaffProfile,
   deactivateStaff,
   toggleStudentStatus,
-  toggleStaffStatus 
+  toggleStaffStatus,
+  updateStaffPasswordByAdmin 
 } from "@/services";
 import { getAllDepartments } from "@/services/academicService";
 
@@ -38,6 +39,10 @@ export default function AdminStaff() {
   const [success, setSuccess] = useState("");
 
   const [togglingLogin, setTogglingLogin] = useState(false);
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordStaff, setPasswordStaff] = useState(null);
+  const [passwordForm, setPasswordForm] = useState({ password: "", confirmPassword: "" });
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -94,6 +99,50 @@ export default function AdminStaff() {
       setDepartments(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching departments:", err);
+    }
+  };
+
+  const openPasswordModal = (member) => {
+    setError("");
+    setSuccess("");
+    setPasswordStaff(member);
+    setPasswordForm({ password: "", confirmPassword: "" });
+    setShowPasswordModal(true);
+  };
+
+  const handlePasswordFormChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleUpdateStaffPassword = async (e) => {
+    e.preventDefault();
+    if (!passwordStaff?.userId) {
+      setError("Invalid staff record (missing userId)");
+      return;
+    }
+
+    if (!passwordForm.password || passwordForm.password.trim().length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+    if (passwordForm.password !== passwordForm.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setFormLoading(true);
+    setError("");
+    try {
+      const res = await updateStaffPasswordByAdmin(passwordStaff.userId, passwordForm.password);
+      setSuccess(res?.message || "Password updated successfully");
+      setShowPasswordModal(false);
+      setPasswordStaff(null);
+      setPasswordForm({ password: "", confirmPassword: "" });
+    } catch (err) {
+      setError(err?.message || err?.status || "Failed to update password");
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -509,6 +558,15 @@ export default function AdminStaff() {
                       </button>
                       <button
                         type="button"
+                        onClick={() => openPasswordModal(member)}
+                        className="px-3 py-1 bg-[#1f5a6c] hover:bg-[#174652] text-white rounded mb-2"
+                        title="Change Password"
+                        disabled={formLoading}
+                      >
+                        Change
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => handleDeleteStaff(member)}
                         className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded"
                         title="Delete"
@@ -521,6 +579,65 @@ export default function AdminStaff() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {showPasswordModal && passwordStaff && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+              <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
+                Change Password
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                {passwordStaff.firstName} {passwordStaff.lastName}
+              </p>
+
+              <form onSubmit={handleUpdateStaffPassword}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">New Password *</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={passwordForm.password}
+                    onChange={handlePasswordFormChange}
+                    className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-1">Confirm Password *</label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={passwordForm.confirmPassword}
+                    onChange={handlePasswordFormChange}
+                    className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordModal(false);
+                      setPasswordStaff(null);
+                      setPasswordForm({ password: "", confirmPassword: "" });
+                    }}
+                    className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={formLoading}
+                    className="px-4 py-2 bg-[#1f5a6c] text-white rounded hover:bg-[#174652] disabled:opacity-50"
+                  >
+                    {formLoading ? "Saving..." : "Save"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
 

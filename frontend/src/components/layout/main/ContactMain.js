@@ -6,7 +6,7 @@ import React from "react";
 const ContactMain = () => {
   return (
     <>
-      <HeroPrimary path={"Contact Page"} title={"Contact Page"} />
+      <HeroPrimary path={"Contact Us"} title={"Contact Us"} />
       <ContactPrimary />
       <ContactFrom />
     </>

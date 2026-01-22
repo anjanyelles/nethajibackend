@@ -120,6 +120,14 @@ public class AuthenticationController {
     }
 
 
+    @PatchMapping("/update-staff-password-by-admin")
+    public ResponseEntity<Map<String ,Object>> updateStaffPasswordByAdmin(@RequestParam UUID staffId, @RequestParam String password){
+
+        return  authService.updateStaffPasswordByAdmin(staffId, password);
+
+    }
+
+
     @PatchMapping("/active-inactive-student")
     public ResponseEntity<Map<String ,Object>> activeOrInactiveStudentForLogin(@RequestParam UUID studentId,@RequestParam Boolean status){
 

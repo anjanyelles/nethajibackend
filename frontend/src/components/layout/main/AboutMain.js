@@ -8,7 +8,7 @@ import Testimonials from "@/components/sections/testimonials/Testimonials";
 const AboutMain = () => {
   return (
     <>
-      <HeroPrimary title="About Page" path={"About Page"} />
+      <HeroPrimary title="About Us" path={"About Us"} />
       <About11 />
       {/* <Overview /> */}
       <Testimonials />

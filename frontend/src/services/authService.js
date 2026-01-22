@@ -169,6 +169,17 @@ export const updatePasswordByAdmin = async (studentId, password) => {
   }
 };
 
+export const updateStaffPasswordByAdmin = async (staffId, password) => {
+  try {
+    const response = await api.patch("auth/update-staff-password-by-admin", null, {
+      params: { staffId, password },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
 /**
  * Activate/Deactivate Student
  */

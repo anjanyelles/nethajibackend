@@ -72,4 +72,6 @@ public interface AuthService {
     ResponseEntity<VerifyDtoResponse> Registration(EmailOtpRequest emailOtpRequest);
 
     ResponseEntity<Map<String, Object>> updatePasswordByAdmin(UUID studentId, String password);
+
+    ResponseEntity<Map<String, Object>> updateStaffPasswordByAdmin(UUID staffId, String password);
 }

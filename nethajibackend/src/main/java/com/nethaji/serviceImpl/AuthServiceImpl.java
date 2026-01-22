@@ -128,6 +128,53 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+
+    public ResponseEntity<Map<String, Object>> updateStaffPasswordByAdmin(UUID staffId, String password){
+
+        Map<String, Object> res = new LinkedHashMap<>();
+
+        User staff = userRepository.findById(staffId).orElse(null);
+
+        if (staff == null) {
+            res.put("status", false);
+            res.put("message", "Staff not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+        }
+
+        if (staff.getUserType() != User.UserType.LECTURER) {
+            res.put("status", false);
+            res.put("message", "User is not a staff");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
+
+        try {
+            String salt = UUID.randomUUID().toString() + UUID.randomUUID().toString().substring(0, 10);
+            String hashedPassword = signatureService.hashPassword(password, salt);
+
+            staff.setSalt(salt);
+            staff.setPasswordHash(hashedPassword);
+            staff.setUpdatedAt(new Date());
+
+            userRepository.save(staff);
+
+            res.put("status", true);
+            res.put("message", "Password updated successfully");
+            res.put("staffId", staffId);
+
+            return ResponseEntity.ok(res);
+
+        }
+
+        catch (Exception ex) {
+
+            log.error("Password update failed for staffId={}", staffId, ex);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+        }
+
+
+    }
+
     private void enrichStudentRegisterRequestIfStudent(User user, RegisterRequest dto) {
         if (user == null || dto == null || user.getUserType() != User.UserType.STUDENT) {
             return;
