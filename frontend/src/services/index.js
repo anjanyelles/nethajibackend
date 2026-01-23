@@ -10,4 +10,5 @@ export * from "./gradesService";
 export * from "./assignmentService";
 export * from "./staffService";
 export * from "./fileService";
+export * from "./messagingService";
 export * as departmentService from "./departmentService"; // Keep existing for backward compatibility

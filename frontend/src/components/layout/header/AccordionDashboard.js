@@ -30,6 +30,11 @@ const AccordionDashboard = () => {
           path: "/dashboards/admin-course",
         },
         {
+          name: "Bulk Messaging",
+
+          path: "/dashboards/admin-bulk-messaging",
+        },
+        {
           name: "Review",
 
           path: "/dashboards/admin-reviews",
@@ -144,6 +149,12 @@ const AccordionDashboard = () => {
           name: "Enrolled Courses",
 
           path: "/dashboards/student-enrolled-courses",
+        },
+
+        {
+          name: "Inbox",
+
+          path: "/dashboards/student-inbox",
         },
 
         {

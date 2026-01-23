@@ -31,6 +31,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT u FROM User u WHERE u.userType = :userType")
     List<User> findUsersByType(@Param("userType") User.UserType userType);
 
+    @Query("SELECT u FROM User u WHERE u.userType = :userType AND u.joiningYear = :joiningYear")
+    List<User> findUsersByTypeAndJoiningYear(@Param("userType") User.UserType userType, @Param("joiningYear") Integer joiningYear);
+
+    @Query("SELECT u FROM User u WHERE u.userType = :userType AND u.id IN :ids")
+    List<User> findUsersByTypeAndIdIn(@Param("userType") User.UserType userType, @Param("ids") List<UUID> ids);
+
 
 
     @Query("SELECT u FROM User u WHERE u.userType = :userType")
