@@ -21,11 +21,12 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:nethaji_user}
     password: ${SPRING_DATASOURCE_PASSWORD:password}
     hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
+      minimum-idle: 2
+      maximum-pool-size: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      leak-detection-threshold: 60000
 
 twoFactor:
   host: https://2factor.in/API/V1/
