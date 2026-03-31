@@ -9,7 +9,7 @@ const API_BASE_URL_OVERRIDE = process.env.NEXT_PUBLIC_API_BASE_URL;
 const BASE_URL =
   API_BASE_URL_OVERRIDE ||
   (environment === "prod"
-    ? "https://api.nethajidcs.com/api/nethaji-service/"
+    ? "https://nethaji-backend.onrender.com/api/nethaji-service/"
     : "http://localhost:9029/api/nethaji-service/");
 
 const DEFAULT_TIMEOUT_MS = Number.parseInt(
