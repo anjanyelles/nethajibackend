@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: nethaji-backend
+    env: java
+    buildCommand: mvn clean install -DskipTests
+    startCommand: java -jar target/nethaji.jar
+    envVars:
+      - key: PORT
+        value: 9029
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: nethaji-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: nethaji-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: nethaji-db
+          property: password
+      - key: APP_AUTH_TOKEN_SECRET
+        generateValue: true
+      - key: JAVA_OPTS
+        value: -Xmx512m -Xms256m
+
+databases:
+  - name: nethaji-db
+    databaseName: nethaji
+    user: nethaji_user
