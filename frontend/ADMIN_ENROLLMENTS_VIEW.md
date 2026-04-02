@@ -10,7 +10,7 @@ A comprehensive admin view for managing student enrollments has been created wit
 
 ### **1. Enhanced Service Layer**
 ```
-src/services/enrollmentService.js
+src/services/enrollmentService.js 
 ```
 - ✅ **searchEnrollments(params)** - Search with filters
 - ✅ **getEnrollmentById(id)** - Get single enrollment
