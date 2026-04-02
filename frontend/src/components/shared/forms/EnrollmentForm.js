@@ -129,7 +129,7 @@ const EnrollmentForm = () => {
           village: "",
           courses: [],
           referredBy: ""
-        });
+        });        
       } else {
         setSubmitMessage(result.message || "Failed to submit enrollment");
       }
