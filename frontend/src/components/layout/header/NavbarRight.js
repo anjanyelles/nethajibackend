@@ -50,8 +50,17 @@ const NavbarRight = () => {
         {isHome4 || isHome4Dark || isHome5 || isHome5Dark ? (
           ""
         ) : (
-          <li className="hidden lg:block">
+
+          <li className="hidden lg:block mr-4">
             {/* <LoginButton /> */}
+            <Link href="/enrollment">
+              <button
+                type="button"
+                className="text-size-12 2xl:text-size-15 text-whiteColor bg-primaryColor block border-primaryColor border hover:text-primaryColor hover:bg-white px-15px py-2 rounded-standard dark:hover:bg-whiteColor-dark dark: dark:hover:text-whiteColor"
+              >
+                Student Enrollment
+              </button>
+            </Link>
           </li>
         )}
         <li className="hidden lg:block">
